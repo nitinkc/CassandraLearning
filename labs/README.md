@@ -117,7 +117,12 @@ Common troubleshooting (concise)
 - `socket.gaierror: [Errno -2] Name or service not known` when running init container: the init script attempted to contact a host that doesn't resolve. Use the container name from `docker compose ps` or the container IP.
 
 Docs and story (why these labs exist)
-- Story: start with the simplest unit — keyspace and single-table reads by id — then introduce partitioning/clustering (how data is distributed and ordered), then move to modeling by query (the core Cassandra mindset), followed by optional server-side helpers (indexes/MV) and operational features (consistency, LWT, batching, TTL/tombstones), and finally aggregation and filtering pitfalls. Each lab intentionally introduces a small, testable concept and shows both the correct patterns and common anti-patterns you'd encounter in interviews.
+
+- Story: start with the simplest unit — keyspace and single-table reads by id 
+- then introduce partitioning/clustering (how data is distributed and ordered), 
+- then move to modeling by query (the core Cassandra mindset), 
+- followed by optional server-side helpers (indexes/MV) and operational features (consistency, LWT, batching, TTL/tombstones), 
+- and finally aggregation and filtering pitfalls. Each lab intentionally introduces a small, testable concept and shows both the correct patterns and common anti-patterns you'd encounter in interviews.
 
 Notes from the Copilot context (project conventions)
 - This repo is intentionally query-first and denormalized.
@@ -128,4 +133,93 @@ If you'd like next steps I can:
 - Consolidate `scripts/init.cql` and the individual `labs/*.cql` into a single `scripts/init.cql` (or remove duplicates) and update `docker-compose.yml` to mount the repository so you can run `cqlsh -f /labs/01_keyspace_basics.cql` directly from the container. (I can implement this now if you want.)
 - Add a short appendix with command examples for copying files into the container, or update `scripts/docker-compose.yml` to mount the repo.
 
--- End of labs README --
+Why query-first (concise)
+- What it means: instead of modeling data around normalized entities and joins, you model tables around the queries your application needs to run. Each table is designed so a target query touches a single partition and returns results with predictable latency.
+- Why this repo: Cassandra is optimized for high write throughput and fast single-partition reads. Denormalization (storing the same logical data in multiple tables) keeps reads simple and fast at the cost of extra storage and write coordination.
+
+Quick mapping to the labs
+- Lab 03 (`users_by_id` + `users_by_email`) demonstrates the canonical pattern: one table per access pattern. Reads by id and reads by email hit different tables designed for those access patterns.
+- Lab 02 shows partition bucketing to avoid hot partitions — a common operational technique when query-first tables may otherwise grow unbounded.
+
+Step-by-step example — converting a relational model to query-first
+- Relational (example): a single `users` table and an `orders` table, and an application that needs:
+  1) Get user by id
+  2) Get user by email
+  3) Get orders for a user (most recent first)
+
+Relational schema (conceptual):
+- users(id PK, email unique, full_name, created_at)
+- orders(id PK, user_id FK -> users.id, created_at, amount, status)
+
+Problems on Cassandra if you keep this relational layout:
+- "Get user by email" requires a full-table scan or secondary index (not ideal at scale).
+- "Get orders for a user" is doable if `orders` is partitioned by user, but joining across tables is an anti-pattern.
+
+Query-first conversion (concrete CQL examples — also available in `docker/init.cql` and `labs/08_relational_to_query_first.cql`):
+
+1) users_by_id — look up by id
+CREATE TABLE IF NOT EXISTS users_by_id (
+  user_id uuid PRIMARY KEY,
+  email text,
+  full_name text,
+  created_at timestamp
+);
+
+2) users_by_email — lookup table to answer email->user_id efficiently
+CREATE TABLE IF NOT EXISTS users_by_email (
+  email text,
+  user_id uuid,
+  full_name text,
+  created_at timestamp,
+  PRIMARY KEY ((email), user_id)
+) WITH CLUSTERING ORDER BY (user_id ASC);
+
+3) orders_by_user — serve the "get orders for a user" access pattern (recent first)
+CREATE TABLE IF NOT EXISTS orders_by_user (
+  user_id uuid,
+  order_ts timestamp,
+  order_id uuid,
+  amount decimal,
+  status text,
+  PRIMARY KEY ((user_id), order_ts)
+) WITH CLUSTERING ORDER BY (order_ts DESC);
+
+Typical application write flow (dual-write / batch):
+- When creating an order, write to `orders_by_user` and also record any additional helper tables required by queries.
+- Example logged batch (atomic across tables):
+BEGIN LOGGED BATCH
+  INSERT INTO orders_by_user (user_id, order_ts, order_id, amount, status) VALUES (1111..., toTimestamp(now()), uuid(), 129.99, 'PLACED');
+  -- if you had another table for order lookup by id, write it here
+APPLY BATCH;
+
+Common queries and their CQL (fast, partition-scoped):
+- Get user by id: SELECT * FROM users_by_id WHERE user_id = <uuid>;
+- Get users by email: SELECT * FROM users_by_email WHERE email = '<email>';
+- List recent orders for a user: SELECT * FROM orders_by_user WHERE user_id = <uuid> LIMIT 20;
+
+Why this aligns with the Spring models in this repo
+- The `OrderByUser` model in `spring-boot-app` maps directly to `orders_by_user` above: the PK is the `user_id` partition with `order_ts` clustering for ordering. Writing/reading in the service layer should target these tables directly (dual-writes for any additional lookup tables).
+
+Orders table notes (practical)
+- Use time-based clustering columns (`order_ts` or timeuuid) so reads for recent orders are efficient and bounded.
+- If a user can generate a very large number of orders, consider adding a bucket (e.g., year_month) to the partition key to bound partition size.
+
+2-node docker-compose demo and NTS keyspaces (how-to)
+- The project includes a `docker/docker-compose.yml` demo for two local nodes. Important points to make NTS keyspaces work:
+  - Each Cassandra node must agree on seed hostnames; set `CASSANDRA_SEEDS` to a comma-separated list of seed hostnames that are resolvable inside the Docker network (e.g., `cassandra,cassandra2`).
+  - When creating a `NetworkTopologyStrategy` keyspace, the DC names you use in the keyspace replication map must match the node-configured DC names (environment variable `CASSANDRA_DC`). The compose file sets `CASSANDRA_DC` for each node.
+  - For a 2-node lab/demo set RF=2 for the DC you create in `init.cql` (so replication fits the available nodes). For a production demo use RF=3 and run more nodes.
+
+Example: to create a 2-node NTS-friendly keyspace for local demos:
+CREATE KEYSPACE IF NOT EXISTS cassandra_labs_nets WITH replication = {'class':'NetworkTopologyStrategy', 'datacenter1': 2};
+
+Troubleshooting seeds and hostnames
+- If a node fails with "Seed provider couldn't lookup host cassandra" or "The seed provider lists no seeds":
+  - Check service hostnames in `docker compose ps` and ensure they match `CASSANDRA_SEEDS` entries.
+  - Ensure any entry that lists a DC name in the keyspace uses exactly the same DC value present in node environment variables.
+
+Files you may want to inspect or run
+- `docker/docker-compose.yml` — updated compose for a 2-node demo.
+- `docker/init.cql` — consolidated init script (contains `orders_by_user` table and demo data). You can run it with the init container or copy individual lab files into the running container.
+- `labs/08_relational_to_query_first.cql` — new file with step-by-step conversion and sample queries (safe to re-run).
+

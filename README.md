@@ -103,3 +103,6 @@ Use `labs/interview-questions.md` for a curated list of questions with short gui
 ## Notes
 - The application is intentionally simple and focused on Cassandra behavior.
 - Schema is managed manually via `docker/init.cql` and auto-applied by docker compose.
+
+
+Axon Ops workspace

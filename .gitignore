@@ -15,3 +15,26 @@ spring-boot-app/target/
 # Maven wrapper downloads
 spring-boot-app/.mvn/wrapper/maven-wrapper.jar
 
+# Additional ignores
+
+# Java
+*.class
+*.jar
+*.war
+*.ear
+
+# IntelliJ
+/.idea/
+
+# VS Code
+.vscode/
+
+# Docker
+docker/**/data
+**/docker/*/data
+
+# Postman
+*.postman_collection.json
+
+# Env
+.env

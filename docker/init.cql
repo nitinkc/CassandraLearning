@@ -41,11 +41,11 @@ VALUES ('alex@example.com', 11111111-1111-1111-1111-111111111111, 'Alex Chen', t
 
 --- SANDBOX: Additional keyspaces and tables for later labs (indexes, materialized views, multi-DC) ---
 
--- NetworkTopologyStrategy example (single-DC default; safe for local demo)
+-- NetworkTopologyStrategy example (adjusted for local 2-node demo: datacenter1 RF=2)
 CREATE KEYSPACE IF NOT EXISTS cassandra_labs_nets
 WITH replication = {
   'class': 'NetworkTopologyStrategy',
-  'datacenter1': 3
+  'datacenter1': 2
 };
 -- Multi-DC template (uncomment and adjust only if your cluster has these DC names):
 -- CREATE KEYSPACE cassandra_labs_nets WITH replication = {

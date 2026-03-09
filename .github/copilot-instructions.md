@@ -1,9 +1,9 @@
 ## Copilot Context: Cassandra Learning Labs (consolidated)
 - Goal: structured, incremental path to learn Cassandra with CQL labs and a Spring Boot app.
-- Environment: Cassandra 5.0.6 (Docker in `scripts/`), Java 21, Maven, Spring Boot 3.x app in `spring-boot-app/`.
-- Conventions: schema via `scripts/init.cql`; labs numbered in `labs/`; query-first denormalized tables.
+- Environment: Cassandra 5.0.6 (Docker in `docker/`), Java 21, Maven, Spring Boot 3.x app in `spring-boot-app/`.
+- Conventions: schema via `docker/init.cql`; labs numbered in `labs/`; query-first denormalized tables.
 - Key learning areas: primary key design; query-based modeling; consistency & LWT; batching; TTL/tombstones; secondary indexes & MVs; aggregation limits & filtering; data distribution/hot partitions.
-- Important files: `labs/README.md`, `labs/interview-questions.md`, `scripts/docker-compose.yml`, `scripts/init.cql`, `spring-boot-app/`.
+- Important files: `labs/README.md`, `labs/interview-questions.md`, `docker/docker-compose.yml`, `docker/init.cql`, `spring-boot-app/`.
 
 
 ## COMMUNICATION RULES:
