@@ -1,7 +1,7 @@
 site_name: Cassandra Learning Labs
 site_description: Cassandra CQL labs and Spring Boot learning path
 theme:
-  name: material
+  name: journal
   features:
     - content.code.copy
     - content.code.annotate
@@ -12,10 +12,6 @@ nav:
 
 markdown_extensions:
   - admonition
-  - pymdownx.highlight:
-      anchor_linenums: true
-      linenums: true
-      pygments_lang_class: true
   - pymdownx.inlinehilite
   - pymdownx.superfences
   - pymdownx.details

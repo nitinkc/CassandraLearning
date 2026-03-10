@@ -1,4 +1,5 @@
 # Cassandra Learning Labs (CQL + Spring Boot)
+[https://nitinkc.github.io/CassandraSpringBootLearning/](https://nitinkc.github.io/CassandraSpringBootLearning/)
 
 ## Prerequisites
 - Java 21
