@@ -2,13 +2,19 @@ site_name: Cassandra Learning Labs
 site_description: Cassandra CQL labs and Spring Boot learning path
 theme:
   name: journal
-  features:
-    - content.code.copy
-    - content.code.annotate
 nav:
   - Home: index.md
-  - Labs Guide: labs-guide.md
-  - Interview Questions: interview-questions.md
+  - Theory:
+      - NoSQL & Cassandra: theory/01-nosql-and-cassandra.md
+      - Core Concepts: theory/02-core-concepts.md
+      - Data Modeling: theory/03-data-modeling.md
+      - Indexes & Materialized Views: theory/04-indexes-and-mv.md
+      - Consistency, LWT & Batching: theory/05-consistency-lwt-batch.md
+      - TTL & Tombstones: theory/06-ttl-tombstones.md
+      - Aggregation & Counters: theory/07-aggregation-counters.md
+      - Advanced Topics: theory/08-advanced.md
+  - Labs Overview: labs-overview.md
+  - Interview Prep: interview-prep.md
 
 markdown_extensions:
   - admonition
@@ -17,4 +23,7 @@ markdown_extensions:
   - pymdownx.details
 plugins:
   - search
-  - mermaid2
+
+extra_javascript:
+  - https://unpkg.com/mermaid@10.9.0/dist/mermaid.min.js
+  - js/mermaid-init.js

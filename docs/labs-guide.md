@@ -1,6 +1,57 @@
 # Cassandra CQL Labs — Guided Learning Path
 
-These labs are incremental and intentionally query-first. Follow them in order to build a mental model of Cassandra's data modeling choices, trade-offs, and operational concerns.
+## Cassandra Learning Topics (Systematic Interview Prep)
+
+### 1. Introduction to NoSQL and Cassandra
+- What is NoSQL? Types of NoSQL databases
+- Cassandra’s architecture and use cases
+- CAP theorem and Cassandra’s trade-offs
+
+### 2. Core Cassandra Concepts
+- Cluster, node, data center
+- Partitioning: partition key, token ring, data distribution
+- Clustering columns: on-disk order, range queries
+- Replication: replication factor, consistency levels
+- Hinted handoff, read/write path, tunable consistency
+- Lab: 01_keyspace_basics.cql, 02_partitioning_clustering.cql
+
+### 3. Data Modeling in Cassandra
+- Query-first design: denormalization, query-based tables
+- Primary key design: single vs. composite keys
+- Wide rows, time-series modeling, bounding partitions
+- Lab: 03_modeling_by_query.cql
+
+### 4. Indexes and Materialized Views
+- Secondary indexes: pros, cons, and anti-patterns
+- Materialized views: use cases and limitations
+- Lab: 04_indexes_and_mv.cql
+
+### 5. Consistency, Lightweight Transactions, and Batching
+- Consistency levels: ONE, QUORUM, ALL, LOCAL_QUORUM, etc.
+- Lightweight transactions (LWT): compare-and-set, use cases
+- Batching: atomicity, pitfalls
+- Lab: 05_consistency_lwt_batch.cql
+
+### 6. TTL, Tombstones, and Deletes
+- TTL (time-to-live): expiring data
+- Tombstones: delete markers, compaction, anti-patterns
+- Lab: 06_ttl_tombstones.cql
+
+### 7. Aggregation, Filtering, and Counters
+- Aggregation limitations, ALLOW FILTERING, paging
+- Counters: use cases and caveats
+- Lab: 07_aggregation_filtering.cql
+
+### 8. Advanced Topics
+- Data distribution, hot partitions, anti-patterns
+- Multi-DC replication, network topology
+- Security basics: authentication, authorization
+- Monitoring and repair basics
+- Placeholder: Add labs for advanced topics as needed (e.g., multi-DC, security)
+
+---
+
+These topics are mapped to the hands-on labs below. For each topic, review the theory, then complete the corresponding lab for practical understanding.
 
 Environment (assumptions)
 - Cassandra 5.x (local Docker-based labs).
@@ -218,7 +269,211 @@ Troubleshooting seeds and hostnames
   - Check service hostnames in `docker compose ps` and ensure they match `CASSANDRA_SEEDS` entries.
   - Ensure any entry that lists a DC name in the keyspace uses exactly the same DC value present in node environment variables.
 
-Files you may want to inspect or run
-- `docker/docker-compose.yml` — updated compose for a 2-node demo.
-- `docker/init.cql` — consolidated init script (contains `orders_by_user` table and demo data). You can run it with the init container or copy individual lab files into the running container.
-- `labs/08_relational_to_query_first.cql` — new file with step-by-step conversion and sample queries (safe to re-run).
+# Cassandra Tutorial: From Basics to Advanced (with Self-Check Questions)
+
+### 1. NoSQL and Cassandra Basics
+Cassandra is a distributed NoSQL database designed for high availability and scalability. Unlike relational databases, Cassandra uses a flexible schema and is optimized for fast writes and horizontal scaling.
+
+**Key Concepts:**
+- NoSQL databases: schema-less, distributed, designed for scale
+- Cassandra’s architecture: peer-to-peer, decentralized
+- CAP theorem: Cassandra favors Availability and Partition tolerance (AP)
+
+**Self-Check:**
+- What is NoSQL? How does Cassandra differ from relational databases?
+- What are the main use cases for Cassandra?
+- What is the CAP theorem, and where does Cassandra fit?
+
+---
+
+### 2. Core Cassandra Concepts
+Cassandra clusters consist of nodes grouped into data centers. Data is distributed using partition keys and replicated for fault tolerance.
+
+**Key Concepts:**
+- Cluster, node, data center
+- Partition key: determines data placement and distribution
+- Clustering columns: define on-disk order within a partition
+- Replication factor: number of copies per data center
+- Consistency levels: control read/write guarantees
+
+**Example:**
+```sql
+CREATE TABLE orders_by_user (
+  user_id UUID,
+  order_id TIMEUUID,
+  amount decimal,
+  PRIMARY KEY (user_id, order_id)
+);
+```
+- Here, `user_id` is the partition key; `order_id` is a clustering column.
+
+**Self-Check:**
+- What is a cluster, node, and data center in Cassandra?
+- What is a partition key, and why is it critical?
+- How do clustering columns affect on-disk ordering and query patterns?
+- How does replication factor impact availability and reads/writes?
+- What is tunable consistency? How do consistency levels work?
+- What are common causes of hot partitions?
+
+**Lab:** 01_keyspace_basics.cql, 02_partitioning_clustering.cql
+
+---
+
+### 3. Data Modeling and Querying
+Cassandra uses query-first, denormalized data modeling. Tables are designed for specific queries, not for normalization.
+
+**Key Concepts:**
+- Query-first design: one table per access pattern
+- Denormalization: duplicate data for fast reads
+- Wide rows: use clustering columns for time-series or ordered data
+
+**Example:**
+```sql
+CREATE TABLE users_by_id (
+  user_id UUID PRIMARY KEY,
+  email text,
+  full_name text
+);
+CREATE TABLE users_by_email (
+  email text,
+  user_id UUID,
+  full_name text,
+  PRIMARY KEY (email, user_id)
+);
+```
+
+**Self-Check:**
+- Why is data modeled by query in Cassandra?
+- When would you denormalize and duplicate data?
+- How do you design tables for time-series data?
+- What is the anti-pattern of using ALLOW FILTERING?
+- How do you handle one-to-many and many-to-many relationships?
+
+**Lab:** 03_modeling_by_query.cql
+
+---
+
+### 4. Indexes and Materialized Views
+Cassandra supports secondary indexes and materialized views, but both have trade-offs and should be used carefully.
+
+**Key Concepts:**
+- Secondary indexes: best for low-cardinality, small partitions
+- Materialized views: server-side denormalization, but can drift
+
+**Example:**
+```sql
+CREATE INDEX ON users_by_id(email);
+CREATE MATERIALIZED VIEW users_by_email_mv AS
+  SELECT * FROM users_by_id
+  WHERE email IS NOT NULL AND user_id IS NOT NULL
+  PRIMARY KEY (email, user_id);
+```
+
+**Self-Check:**
+- When should you use a secondary index? When should you avoid it?
+- What are materialized views? What are their pros and cons?
+- How do you keep denormalized tables in sync?
+
+**Lab:** 04_indexes_and_mv.cql
+
+---
+
+### 5. Consistency, Lightweight Transactions, and Batching
+Cassandra offers tunable consistency and supports lightweight transactions (LWT) for conditional updates. Batching can be used for atomic multi-table writes.
+
+**Key Concepts:**
+- Consistency levels: ONE, QUORUM, ALL, LOCAL_QUORUM, etc.
+- LWT: compare-and-set, uses Paxos protocol
+- Batching: logged (atomic), unlogged (performance)
+
+**Example:**
+```sql
+BEGIN LOGGED BATCH
+  INSERT INTO users_by_id (user_id, email, full_name) VALUES (...);
+  INSERT INTO users_by_email (email, user_id, full_name) VALUES (...);
+APPLY BATCH;
+```
+
+**Self-Check:**
+- What is a lightweight transaction (LWT)?
+- When should you use batches, and what are the pitfalls?
+- What is the difference between logged and unlogged batches?
+
+**Lab:** 05_consistency_lwt_batch.cql
+
+---
+
+### 6. TTL, Tombstones, and Deletes
+Cassandra supports automatic data expiration (TTL) and uses tombstones to mark deletions, which can impact performance if not managed.
+
+**Key Concepts:**
+- TTL: time-to-live for automatic expiration
+- Tombstones: markers for deleted data
+- Compaction: cleans up tombstones
+
+**Example:**
+```sql
+INSERT INTO sessions_by_user (user_id, session_id) VALUES (...) USING TTL 3600;
+DELETE FROM sessions_by_user WHERE user_id = ... AND session_id = ...;
+```
+
+**Self-Check:**
+- What is TTL? How does it work in Cassandra?
+- What are tombstones? Why can they be a problem?
+- How does compaction interact with tombstones?
+
+**Lab:** 06_ttl_tombstones.cql
+
+---
+
+### 7. Aggregation, Filtering, and Counters
+Cassandra has limited support for aggregation and filtering. Counters are supported but have caveats.
+
+**Key Concepts:**
+- Aggregation: only safe within a partition
+- ALLOW FILTERING: can cause full table scans
+- Counters: distributed, but with limitations
+
+**Example:**
+```sql
+SELECT COUNT(*) FROM table WHERE partition_key = ...;
+UPDATE page_views SET count = count + 1 WHERE url = ...;
+```
+
+**Self-Check:**
+- Why is aggregation limited in Cassandra?
+- What is the danger of using ALLOW FILTERING?
+- How do counters work, and what are their caveats?
+
+**Lab:** 07_aggregation_filtering.cql
+
+---
+
+### 8. Advanced Topics
+Cassandra supports advanced features for large-scale, secure, and reliable deployments.
+
+**Key Concepts:**
+- Data distribution, hot partitions, anti-patterns
+- Multi-DC replication, network topology
+- Security: authentication, authorization
+- Monitoring and repair
+
+**Example:**
+```sql
+CREATE KEYSPACE demo_multi_dc WITH replication = {'class':'NetworkTopologyStrategy', 'dc1':2, 'dc2':2};
+CREATE ROLE app_user WITH PASSWORD = 'replace_me' AND LOGIN = true;
+GRANT SELECT ON keyspace_name.table_name TO app_user;
+-- Use nodetool status, nodetool repair for monitoring and repair
+```
+
+**Self-Check:**
+- What is a hot partition, and how do you avoid it?
+- How does multi-DC replication work?
+- What are some security features in Cassandra?
+- How do you monitor and repair a Cassandra cluster?
+
+**Labs:** 09_multi_dc_replication.cql, 10_security_basics.cql, 11_monitoring_and_repair.cql
+
+---
+
+This tutorial covers all major Cassandra concepts from basics to advanced, with explanations, examples, self-check questions, and mapped hands-on labs for each topic.

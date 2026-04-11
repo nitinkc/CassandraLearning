@@ -1,0 +1,12 @@
+-- Lab 11: Monitoring and Repair Basics
+-- TODO: Implement steps for running nodetool commands, checking cluster health, and performing repairs.
+-- Example:
+-- nodetool status
+-- nodetool repair
+-- Add more operational steps and explanations as needed.
+-- Lab 09: Multi-DC Replication and NetworkTopologyStrategy
+-- TODO: Implement practical steps for creating a keyspace with NetworkTopologyStrategy, adding data centers, and verifying replication.
+-- Example:
+-- CREATE KEYSPACE IF NOT EXISTS demo_multi_dc WITH replication = {'class':'NetworkTopologyStrategy', 'dc1':2, 'dc2':2};
+-- Add more CQL and operational steps as needed.
+
