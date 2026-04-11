@@ -1,7 +1,8 @@
 # Cassandra Learning Labs (CQL + Spring Boot)
-[Cassandra with Docker Learning Repo](   https://nitinkc.github.io/CassandraSpringBootLearning/)
 
-[Detailed Documentation and Tutorial](https://nitinkc.github.io/CassandraLearning/)
+- [Detailed Documentation and Tutorial](https://nitinkc.github.io/CassandraLearning/)
+
+- [Cassandra with Docker Learning Repo](https://github.com/nitinkc/CassandraLearning)
 
 ## Prerequisites
 - Java 21
@@ -27,10 +28,19 @@ source .venv/bin/activate && pip install -r requirements.txt
 docker compose -f docker/docker-compose.yml up
 ```
 
-## Apply Schema (if needed)
+The schema will be automatically initialized via the `cassandra-init` service once the cluster is healthy (this takes ~30-60 seconds).
+
+## Apply Schema Manually (if needed)
+
+If you need to re-apply the schema or run it separately:
 
 ```shell
-docker compose -f docker/docker-compose.yml exec cassandra cqlsh -f /init/init.cql
+# Option 1: From project root
+docker compose -f docker/docker-compose.yml exec cassandra cqlsh < docker/init.cql
+
+# Option 2: From docker directory
+cd docker
+docker compose exec cassandra cqlsh < init.cql
 ```
 
 ## Run the Spring Boot App
@@ -73,4 +83,7 @@ Publish to GitHub Pages (quick):
 # make sure your repo is committed and has a remote (origin)
 mkdocs gh-deploy --force
 ```
+
+On code push to main, GitHub Actions will automatically build and deploy the docs to GitHub Pages.
+You can view the live docs at https://nitinkc.github.io/CassandraLearning/ after deployment.
 
