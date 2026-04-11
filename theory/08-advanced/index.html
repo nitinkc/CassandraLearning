@@ -1,796 +1,709 @@
-
-<!doctype html>
-<html lang="en" class="no-js">
-  <head>
-    
-      <meta charset="utf-8">
-      <meta name="viewport" content="width=device-width,initial-scale=1">
-      
-        <meta name="description" content="Cassandra CQL labs and Spring Boot learning path">
-      
-      
-      
-      
-        <link rel="prev" href="../07-aggregation-counters/">
-      
-      
-        <link rel="next" href="../../labs-overview/">
-      
-      
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         
-      
-      
-      <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
-    
-    
-      
+        
+        
+        <link rel="shortcut icon" href="../../img/favicon.ico">
         <title>Advanced Topics - Cassandra Learning Labs</title>
-      
-    
-    
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
-      
-      
+        <link href="../../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../../css/fontawesome.min.css" rel="stylesheet">
+        <link href="../../css/brands.min.css" rel="stylesheet">
+        <link href="../../css/solid.min.css" rel="stylesheet">
+        <link href="../../css/v4-font-face.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link id="hljs-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atelier-forest-light.min.css" >
+        <link id="hljs-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css" disabled>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script> 
+    </head>
 
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="../..">Cassandra Learning Labs</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
 
-    
-    
-      
-    
-    
-      
-        
-        
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
-        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
-      
-    
-    
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
-    
-      
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="nav-item">
+                                <a href="../.." class="nav-link">Home</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle active" aria-current="page" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Theory</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../01-nosql-and-cassandra/" class="dropdown-item">NoSQL & Cassandra</a>
+</li>
+                                    
+<li>
+    <a href="../02-core-concepts/" class="dropdown-item">Core Concepts</a>
+</li>
+                                    
+<li>
+    <a href="../03-data-modeling/" class="dropdown-item">Data Modeling</a>
+</li>
+                                    
+<li>
+    <a href="../04-indexes-and-mv/" class="dropdown-item">Indexes & Materialized Views</a>
+</li>
+                                    
+<li>
+    <a href="../05-consistency-lwt-batch/" class="dropdown-item">Consistency, LWT & Batching</a>
+</li>
+                                    
+<li>
+    <a href="../06-ttl-tombstones/" class="dropdown-item">TTL & Tombstones</a>
+</li>
+                                    
+<li>
+    <a href="../07-aggregation-counters/" class="dropdown-item">Aggregation & Counters</a>
+</li>
+                                    
+<li>
+    <a href="./" class="dropdown-item active" aria-current="page">Advanced Topics</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../../labs-overview/" class="nav-link">Labs Overview</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../../interview-prep/" class="nav-link">Interview Prep</a>
+                            </li>
+                        </ul>
 
-    
-    
-  </head>
-  
-  
-    <body dir="ltr">
-  
-    
-    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
-    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
-    <label class="md-overlay" for="__drawer"></label>
-    <div data-md-component="skip">
-      
-        
-        <a href="#advanced-topics" class="md-skip">
-          Skip to content
-        </a>
-      
-    </div>
-    <div data-md-component="announce">
-      
-    </div>
-    
-    
-      
-
-  
-
-<header class="md-header md-header--shadow" data-md-component="header">
-  <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="Cassandra Learning Labs" class="md-header__button md-logo" aria-label="Cassandra Learning Labs" data-md-component="logo">
-      
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
-
-    </a>
-    <label class="md-header__button md-icon" for="__drawer">
-      
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
-    </label>
-    <div class="md-header__title" data-md-component="header-title">
-      <div class="md-header__ellipsis">
-        <div class="md-header__topic">
-          <span class="md-ellipsis">
-            Cassandra Learning Labs
-          </span>
+                    <ul class="nav navbar-nav ms-md-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="../07-aggregation-counters/" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../../labs-overview/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
         </div>
-        <div class="md-header__topic" data-md-component="header-topic">
-          <span class="md-ellipsis">
-            
-              Advanced Topics
-            
-          </span>
-        </div>
-      </div>
-    </div>
-    
-    
-      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
-    
-    
-    
-      
-      
-        <label class="md-header__button md-icon" for="__search">
-          
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
-        </label>
-        <div class="md-search" data-md-component="search" role="dialog">
-  <label class="md-search__overlay" for="__search"></label>
-  <div class="md-search__inner" role="search">
-    <form class="md-search__form" name="search">
-      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
-      <label class="md-search__icon md-icon" for="__search">
-        
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
-        
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
-      </label>
-      <nav class="md-search__options" aria-label="Search">
-        
-        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
-          
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-bs-toggle="collapse" data-bs-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
         </button>
-      </nav>
-      
-    </form>
-    <div class="md-search__output">
-      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
-        <div class="md-search-result" data-md-component="search-result">
-          <div class="md-search-result__meta">
-            Initializing search
-          </div>
-          <ol class="md-search-result__list" role="presentation"></ol>
-        </div>
-      </div>
     </div>
-  </div>
-</div>
-      
+
     
-    
-  </nav>
-  
-</header>
-    
-    <div class="md-container" data-md-component="container">
-      
-      
-        
-          
-        
-      
-      <main class="md-main" data-md-component="main">
-        <div class="md-main__inner md-grid">
-          
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
+        <ul class="nav flex-column">
             
-              
-              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
-                <div class="md-sidebar__scrollwrap">
-                  <div class="md-sidebar__inner">
-                    
-
-
-
-<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
-  <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="Cassandra Learning Labs" class="md-nav__button md-logo" aria-label="Cassandra Learning Labs" data-md-component="logo">
-      
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
-
-    </a>
-    Cassandra Learning Labs
-  </label>
-  
-  <ul class="md-nav__list" data-md-scrollfix>
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../.." class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Home
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-    
-  
-  
-  
-    
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
-        
-          
-          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Theory
-  
-
-    
-  </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_2">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Theory
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../01-nosql-and-cassandra/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    NoSQL & Cassandra
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../02-core-concepts/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Core Concepts
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../03-data-modeling/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Data Modeling
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../04-indexes-and-mv/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Indexes & Materialized Views
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../05-consistency-lwt-batch/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Consistency, LWT & Batching
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../06-ttl-tombstones/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    TTL & Tombstones
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../07-aggregation-counters/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Aggregation & Counters
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-    
-  
-  
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Advanced Topics
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Advanced Topics
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#key-points" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Key Points
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#example-diagram" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Example Diagram
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#summary" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Summary
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../labs-overview/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Labs Overview
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../interview-prep/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Interview Prep
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-    
-  </ul>
-</nav>
-                  </div>
-                </div>
-              </div>
-            
-            
-              
-              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
-                <div class="md-sidebar__scrollwrap">
-                  <div class="md-sidebar__inner">
-                    
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#key-points" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Key Points
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#example-diagram" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Example Diagram
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#summary" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Summary
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-                  </div>
-                </div>
-              </div>
-            
-          
-          
-            <div class="md-content" data-md-component="content">
-              
-              <article class="md-content__inner md-typeset">
-                
-                  
-
-
+            <li class="nav-item" data-bs-level="1"><a href="#advanced-topics" class="nav-link">Advanced Topics</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-bs-level="2"><a href="#definitions-core-concepts" class="nav-link">Definitions &amp; Core Concepts</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#multi-datacenter-replication" class="nav-link">Multi-Datacenter Replication</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#security" class="nav-link">Security</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#monitoring-repair" class="nav-link">Monitoring &amp; Repair</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#performance-tuning" class="nav-link">Performance Tuning</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#common-issues-solutions" class="nav-link">Common Issues &amp; Solutions</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#example-diagram" class="nav-link">Example Diagram</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#production-checklist" class="nav-link">Production Checklist</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#summary" class="nav-link">Summary</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
 
 <h1 id="advanced-topics">Advanced Topics</h1>
-<p>Advanced Cassandra features for large-scale, secure, and reliable deployments.</p>
-<h2 id="key-points">Key Points</h2>
-<ul>
-<li><strong>Hot Partitions</strong>: Avoid with high-cardinality, well-distributed keys.</li>
-<li><strong>Multi-DC Replication</strong>: Use NetworkTopologyStrategy for multiple data centers.</li>
-<li><strong>Security</strong>: Authentication, authorization, optional encryption.</li>
-<li><strong>Monitoring &amp; Repair</strong>: Use nodetool, logs, and monitoring tools.</li>
-</ul>
+<p>Advanced Cassandra features for large-scale, secure, and reliable deployments. These topics are essential for production-grade systems.</p>
+<h2 id="definitions-core-concepts">Definitions &amp; Core Concepts</h2>
+<h3 id="hot-partitions">Hot Partitions</h3>
+<p><strong>Definition</strong>: A hot partition is a partition (or set of partitions) that receives a disproportionate amount of traffic compared to other partitions in the same table.</p>
+<p><strong>What it means</strong>:
+- One node becomes a bottleneck while others are idle
+- Limits throughput to hot partition's node capacity
+- Causes latency spikes and timeouts
+- <strong>Most common Cassandra performance issue</strong>
+- Result of poor partition key design or skewed data distribution</p>
+<p><strong>Example of Hot Partition</strong>:
+<div class="highlight"><pre><span></span><code>CREATE TABLE user_activity (
+  user_id UUID,
+  activity_date DATE,
+  action TEXT,
+  PRIMARY KEY (user_id, activity_date, action)
+);
+
+-- Celebrity user: 1M actions per second
+-- Regular user: 100 actions per second
+-- Partition key = user_id
+// Celebrity&#39;s partition is on Node1
+// Node1 handles 10x more traffic than Node2, Node3
+
+// Result: Node1 CPU/network saturated
+// Celebrity actions slow, timeouts
+// Other nodes idle
+</code></pre></div></p>
+<p><strong>Identifying Hot Partitions</strong>:
+- Monitor node CPU and network traffic (should be balanced)
+- Use nodetool or JMX metrics
+- Watch for timeouts on specific queries
+- Query patterns show specific partition keys taking most traffic</p>
+<h3 id="preventing-hot-partitions">Preventing Hot Partitions</h3>
+<p><strong>Strategy 1: Composite Partition Key (Salting)</strong>
+<div class="highlight"><pre><span></span><code>-- Distribute hot data across multiple partitions
+CREATE TABLE celebrity_activity (
+  user_id UUID,
+  shard INT,  -- NEW: 0-9
+  activity_date DATE,
+  action TEXT,
+  PRIMARY KEY ((user_id, shard), activity_date, action)
+);
+
+-- When inserting, randomly pick a shard (0-9)
+INSERT INTO celebrity_activity (user_id, shard, activity_date, action)
+VALUES (celebrity_uuid, random() % 10, today(), &#39;liked_video&#39;);
+
+-- Traffic now spreads across 10 partitions instead of 1
+// Single partition: 100K writes/sec
+// Spread across 10: ~10K writes/sec per partition
+</code></pre></div></p>
+<p><strong>Strategy 2: Time-Bucket Distribution</strong>
+<div class="highlight"><pre><span></span><code>-- Already using in time-series
+CREATE TABLE metrics (
+  sensor_id UUID,
+  date_bucket DATE,
+  timestamp TIMESTAMP,
+  value DOUBLE,
+  PRIMARY KEY ((sensor_id, date_bucket), timestamp)
+);
+
+// If sensor sends constant stream of data:
+// Partition rotates daily (sensor_id, 2024-01-01) → (sensor_id, 2024-01-02)
+// Load spreads over time buckets
+</code></pre></div></p>
+<p><strong>Strategy 3: Better Partition Key</strong>
+<div class="highlight"><pre><span></span><code>-- BAD: Partition by low-cardinality field
+CREATE TABLE status_tasks (
+  status TEXT,  -- Only &quot;pending&quot;, &quot;done&quot;, &quot;failed&quot;
+  task_id UUID,
+  PRIMARY KEY (status)
+);
+// All &quot;pending&quot; tasks → one partition → hot spot
+
+-- BETTER: Partition by high-cardinality field
+CREATE TABLE tasks (
+  task_id UUID,  -- Millions of unique values
+  status TEXT,
+  PRIMARY KEY (task_id)
+);
+// Each task is own partition → distributed evenly
+</code></pre></div></p>
+<hr />
+<h2 id="multi-datacenter-replication">Multi-Datacenter Replication</h2>
+<h3 id="definition">Definition</h3>
+<p><strong>Definition</strong>: Multi-DC replication is maintaining copies of data across geographically distributed data centers for disaster recovery, local reads, and high availability.</p>
+<p><strong>What it means</strong>:
+- Data replicated across multiple DCs automatically
+- Can read from nearest DC (low latency)
+- Can write to nearest DC (local quorum)
+- Survive entire DC failures
+- Data consistency eventually across DCs</p>
+<h3 id="networktopologystrategy">NetworkTopologyStrategy</h3>
+<p><strong>Definition</strong>: A replication strategy that controls how many replicas in each data center.</p>
+<p><strong>Example</strong>:
+<div class="highlight"><pre><span></span><code>CREATE KEYSPACE app_data WITH replication = {
+  &#39;class&#39;: &#39;NetworkTopologyStrategy&#39;,
+  &#39;DC_US_EAST&#39;: 3,      -- 3 replicas in US East
+  &#39;DC_EU_WEST&#39;: 3,      -- 3 replicas in EU West
+  &#39;DC_ASIA&#39;: 2          -- 2 replicas in Asia
+};
+
+-- Data replicated automatically:
+-- Write to DC_US_EAST → replicated to DC_EU_WEST → replicated to DC_ASIA
+-- Takes time (milliseconds to seconds depending on network)
+</code></pre></div></p>
+<h3 id="multi-dc-query-patterns">Multi-DC Query Patterns</h3>
+<p><strong>Local Quorum Writes</strong>
+<div class="highlight"><pre><span></span><code>-- Write to nearest DC first (fast)
+INSERT INTO users (user_id, name) 
+VALUES (user123, &#39;Alice&#39;)
+USING CONSISTENCY LOCAL_QUORUM;
+
+// What happens:
+// 1. Coordinator in nearest DC waits for quorum in that DC only
+// 2. Returns success immediately (no remote DC latency)
+// 3. Remote DCs get data asynchronously
+</code></pre></div></p>
+<p><strong>Local Quorum Reads</strong>
+<div class="highlight"><pre><span></span><code>SELECT * FROM users WHERE user_id = &#39;user123&#39;
+USING CONSISTENCY LOCAL_QUORUM;
+
+// Reads from replicas in local DC only
+// Fast because no remote DC latency
+// Might be slightly stale (remote DC writes pending)
+</code></pre></div></p>
+<p><strong>Global Consistency (Across DCs)</strong>
+<div class="highlight"><pre><span></span><code>-- Ensure all DCs have data
+INSERT INTO critical_data (id, value)
+VALUES (data123, &#39;important&#39;)
+USING CONSISTENCY QUORUM;  -- Global QUORUM across all DCs
+
+// Much slower, but guarantees consistency across all regions
+// Use only for critical data
+</code></pre></div></p>
+<h3 id="multi-dc-challenges">Multi-DC Challenges</h3>
+<p><strong>Network Latency</strong>:
+<div class="highlight"><pre><span></span><code>DC_WEST (US): Coordinator at DC_WEST, replicate to:
+  - DC_EAST (US): 20ms away
+  - DC_EU: 100ms away
+  - DC_ASIA: 200ms away
+
+Write with QUORUM: Wait for 2 of 3 DCs = ~100-200ms latency
+Write with LOCAL_QUORUM: Wait for local replicas = ~5-20ms latency
+</code></pre></div></p>
+<p><strong>Conflict Resolution</strong>:
+<div class="highlight"><pre><span></span><code>Scenario: Concurrent writes from different DCs
+
+DC_WEST: Update user name to &#39;Alice&#39; at T=1000
+DC_EAST: Update user name to &#39;Bob&#39; at T=1001
+
+Cassandra uses timestamp tiebreak:
+- T=1001 &gt; T=1000
+- &#39;Bob&#39; wins
+- Both DCs eventually converge to &#39;Bob&#39;
+
+But: Race conditions possible, last-write-wins may not be correct
+</code></pre></div></p>
+<hr />
+<h2 id="security">Security</h2>
+<h3 id="authentication">Authentication</h3>
+<p><strong>Definition</strong>: Mechanism to verify user identity before allowing access.</p>
+<p><strong>Example</strong>:
+<div class="highlight"><pre><span></span><code>Cassandra native authentication:
+- Default: No auth (disabled)
+- Enable: require username/password
+- Connect: cqlsh -u cassandra -p cassandra
+</code></pre></div></p>
+<h3 id="authorization">Authorization</h3>
+<p><strong>Definition</strong>: Mechanism to control what authenticated users can do (permissions).</p>
+<p><strong>Example</strong>:
+<div class="highlight"><pre><span></span><code>-- Create user
+CREATE USER alice WITH PASSWORD &#39;secret123&#39;;
+
+-- Grant permissions
+GRANT SELECT ON app_data.users TO alice;
+GRANT MODIFY ON app_data.users TO alice;
+GRANT ALL ON app_data TO admin_user;
+
+-- Alice can SELECT/INSERT on app_data.users
+// Alice cannot DELETE
+// Alice cannot access other keyspaces
+</code></pre></div></p>
+<h3 id="encryption">Encryption</h3>
+<p><strong>Encryption in Transit</strong>
+<div class="highlight"><pre><span></span><code>Client → Cassandra: SSL/TLS encryption
+  Prevents eavesdropping on network
+  Default: Disabled (enable for security)
+  Performance: ~5-10% overhead
+</code></pre></div></p>
+<p><strong>Encryption at Rest</strong>
+<div class="highlight"><pre><span></span><code>Data stored on disk: encrypted
+  Requires key management (external KMS)
+  Protects against stolen disks
+  Default: Disabled
+  Performance: ~10-20% overhead
+</code></pre></div></p>
+<h3 id="best-practices">Best Practices</h3>
+<p>✅ Enable authentication in production
+✅ Use strong passwords (20+ chars, mixed case/numbers/symbols)
+✅ Enable encryption in transit for sensitive data
+✅ Enable encryption at rest for compliance
+✅ Regular security updates and patches
+✅ Monitor audit logs
+✅ Least privilege: grant minimal permissions</p>
+<hr />
+<h2 id="monitoring-repair">Monitoring &amp; Repair</h2>
+<h3 id="nodetool">nodetool</h3>
+<p><strong>Definition</strong>: A command-line utility for monitoring and managing Cassandra clusters.</p>
+<p><strong>Common Commands</strong>:
+<div class="highlight"><pre><span></span><code><span class="c1"># Check node status</span>
+nodetool<span class="w"> </span>status
+
+<span class="c1"># Check data repair status</span>
+nodetool<span class="w"> </span>repair<span class="w"> </span>keyspace_name
+
+<span class="c1"># View table stats</span>
+nodetool<span class="w"> </span>cfstats<span class="w"> </span>keyspace_name.table_name
+
+<span class="c1"># Flush memtable to disk</span>
+nodetool<span class="w"> </span>flush
+
+<span class="c1"># Check compaction progress</span>
+nodetool<span class="w"> </span>compactionstats
+
+<span class="c1"># View GC info</span>
+nodetool<span class="w"> </span>gcstats
+
+<span class="c1"># Check ring/token distribution</span>
+nodetool<span class="w"> </span>ring
+</code></pre></div></p>
+<h3 id="metrics-to-monitor">Metrics to Monitor</h3>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>What it tells</th>
+<th>Alert threshold</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Read latency</strong></td>
+<td>Query response time</td>
+<td>&gt; 100ms</td>
+</tr>
+<tr>
+<td><strong>Write latency</strong></td>
+<td>Insert response time</td>
+<td>&gt; 50ms</td>
+</tr>
+<tr>
+<td><strong>GC pause time</strong></td>
+<td>JVM garbage collection</td>
+<td>&gt; 1s</td>
+</tr>
+<tr>
+<td><strong>Compaction pending</strong></td>
+<td>SSTable merging queue</td>
+<td>&gt; 10 SSTables</td>
+</tr>
+<tr>
+<td><strong>Tombstone ratio</strong></td>
+<td>Tombstone count / total rows</td>
+<td>&gt; 50%</td>
+</tr>
+<tr>
+<td><strong>Disk usage</strong></td>
+<td>Data + overhead</td>
+<td>&gt; 80% capacity</td>
+</tr>
+<tr>
+<td><strong>CPU usage</strong></td>
+<td>Node CPU load</td>
+<td>&gt; 80%</td>
+</tr>
+<tr>
+<td><strong>Network I/O</strong></td>
+<td>Replication traffic</td>
+<td>Imbalanced across nodes</td>
+</tr>
+</tbody>
+</table>
+<h3 id="anti-entropy-repair">Anti-Entropy Repair</h3>
+<p><strong>Definition</strong>: Repair is a background process that synchronizes replicas and fixes data inconsistencies.</p>
+<p><strong>How repair works</strong>:
+<div class="highlight"><pre><span></span><code>1. Merkle trees: Compare partition keys between replicas
+2. Identify differences: Mismatches in data
+3. Stream repairs: Send missing data to replicas
+4. Verify: Confirm all replicas match
+
+Use case: After node failure/recovery, sync all replicas
+Triggers: Can be manual (nodetool repair) or auto-schedule
+Frequency: Weekly or monthly (before/after maintenance)
+</code></pre></div></p>
+<p><strong>Types of Repair</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Scope</th>
+<th>Time</th>
+<th>Use Case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Full</strong></td>
+<td>All partitions</td>
+<td>1-2 hours</td>
+<td>After node failure</td>
+</tr>
+<tr>
+<td><strong>Incremental</strong></td>
+<td>Since last repair</td>
+<td>10-30 min</td>
+<td>Weekly routine</td>
+</tr>
+<tr>
+<td><strong>Parallel</strong></td>
+<td>Multi-threaded</td>
+<td>Faster</td>
+<td>Multi-core systems</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="performance-tuning">Performance Tuning</h2>
+<h3 id="key-tuning-parameters">Key Tuning Parameters</h3>
+<p><strong>JVM Heap Size</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Default: 1/4 of system RAM</span>
+<span class="c1"># Cassandra typically: 8GB - 16GB</span>
+
+<span class="c1"># Set in cassandra-env.sh:</span>
+<span class="c1">#MAX_HEAP_SIZE=&quot;8G&quot;</span>
+<span class="c1">#HEAP_NEWSIZE=&quot;2G&quot;</span>
+
+<span class="c1"># Rule of thumb:</span>
+//<span class="w"> </span>&lt;<span class="w"> </span>100GB<span class="w"> </span>data:<span class="w"> </span><span class="m">4</span>-8GB<span class="w"> </span>heap
+//<span class="w"> </span>100GB<span class="w"> </span>-<span class="w"> </span>1TB:<span class="w"> </span><span class="m">8</span>-16GB<span class="w"> </span>heap
+//<span class="w"> </span>&gt;<span class="w"> </span>1TB:<span class="w"> </span><span class="m">16</span>-32GB<span class="w"> </span>heap
+//<span class="w"> </span><span class="o">(</span>Monitor<span class="w"> </span>GC<span class="w"> </span>pressure<span class="o">)</span>
+</code></pre></div></p>
+<p><strong>Memtable Size</strong>
+<div class="highlight"><pre><span></span><code># Controls in-memory write buffer
+# Default: 1/4 of heap (if 8GB heap → 2GB memtable)
+
+# Larger memtable:
+// ✓ Fewer disk writes
+// ✓ Better write throughput
+// ✗ Longer GC pauses
+
+# Smaller memtable:
+// ✓ Frequent disk flushes
+// ✓ Lower latency spikes
+// ✗ More SSTable files to compact
+</code></pre></div></p>
+<p><strong>Bloom Filter Size</strong>
+<div class="highlight"><pre><span></span><code># Speeds up read lookups (&quot;does row exist?&quot;)
+# Smaller = faster checks, more false positives (rescan)
+# Larger = slower checks, fewer false positives
+
+# Tune based on workload:
+// Many random reads: larger bloom filter
+// Sequential reads: smaller bloom filter
+</code></pre></div></p>
+<hr />
+<h2 id="common-issues-solutions">Common Issues &amp; Solutions</h2>
+<h3 id="issue-1-high-read-latency">Issue 1: High Read Latency</h3>
+<p><strong>Symptoms</strong>:
+- Queries taking 500ms+ (should be 10-50ms)
+- Intermittent slowness (GC spikes?)</p>
+<p><strong>Causes</strong>:
+1. Hot partitions (uneven data distribution)
+2. High tombstone ratio (many deleted rows)
+3. Bloom filter misses → disk seeks
+4. GC pauses (JVM garbage collection)</p>
+<p><strong>Solutions</strong>:
+<div class="highlight"><pre><span></span><code>1. Shard hot partitions (add composite key)
+2. Reduce gc_grace_seconds or compact more aggressively
+3. Tune bloom filter, cache settings
+4. Increase heap, reduce GC pauses
+</code></pre></div></p>
+<h3 id="issue-2-out-of-memory-high-gc">Issue 2: Out of Memory / High GC</h3>
+<p><strong>Symptoms</strong>:
+- "GC overhead limit exceeded"
+- Frequent Full GC pauses (5-30 seconds)
+- Node becomes unresponsive during GC</p>
+<p><strong>Causes</strong>:
+1. Heap too small for workload
+2. Bloom filters/caches too large
+3. Memory leaks in application
+4. Compaction building large SSTables</p>
+<p><strong>Solutions</strong>:
+<div class="highlight"><pre><span></span><code>1. Increase heap size (8GB → 16GB)
+2. Reduce cache sizes
+3. Split compaction into smaller tasks
+4. Monitor and profile memory usage
+</code></pre></div></p>
+<h3 id="issue-3-repair-timeouts">Issue 3: Repair Timeouts</h3>
+<p><strong>Symptoms</strong>:
+- <code>nodetool repair</code> hangs or fails
+- Repairs take hours for small clusters</p>
+<p><strong>Causes</strong>:
+1. Network issues between nodes
+2. Disk I/O slow (repair + compaction = loads disk)
+3. Cassandra version bugs</p>
+<p><strong>Solutions</strong>:
+<div class="highlight"><pre><span></span><code>1. Run repair during low-traffic window
+2. Use -pr (primary replica) flag: only repair local replicas
+3. Increase timeout settings
+4. Consider incremental repair (faster)
+</code></pre></div></p>
+<hr />
 <h2 id="example-diagram">Example Diagram</h2>
-<div class="highlight"><pre><span></span><code>graph TD;
-  Cluster--&gt;|Replication|DataCenters
-  Cluster--&gt;|Monitoring|Nodetool
-  Cluster--&gt;|Security|Roles
-</code></pre></div>
-<h2 id="summary">Summary</h2>
-<p>Design for scale, security, and reliability. Monitor and repair your cluster regularly.</p>
-<h1 id="nosql-and-cassandra-basics">NoSQL and Cassandra Basics</h1>
-<h2 id="what-is-nosql">What is NoSQL?</h2>
-<p>NoSQL databases are non-relational, schema-less, and designed for distributed, scalable workloads. They include key-value, document, column-family (like Cassandra), and graph databases.</p>
-<h2 id="how-does-cassandra-differ-from-relational-databases">How does Cassandra differ from relational databases?</h2>
-<p>Cassandra is decentralized, uses a flexible schema, and is optimized for high write throughput and horizontal scaling. It does not support joins or multi-row transactions like RDBMS.</p>
-<h2 id="cap-theorem">CAP Theorem</h2>
-<p>The CAP theorem states that a distributed system can only guarantee two of Consistency, Availability, and Partition tolerance. Cassandra prioritizes Availability and Partition tolerance (AP), with tunable consistency.</p>
-<div class="highlight"><pre><span></span><code>graph TD;
-  Consistency --&gt;|Not always| Cassandra
-  Availability --&gt;|Yes| Cassandra
-  PartitionTolerance --&gt;|Yes| Cassandra
-</code></pre></div>
+<div class="mermaid">
+graph TD;
+  A["Cluster Design"] --> B["Prevent Hot<br/>Partitions"]
+  B --> C["Composite<br/>Partition Key"]
+  B --> D["Time<br/>Buckets"]
+  B --> E["Better PK<br/>Selection"]
 
+  A --> F["Multi-DC<br/>Setup"]
+  F --> G["NetworkTopologyStrategy"]
+  G --> H["Local Quorum<br/>Writes"]
+  G --> I["Global Quorum<br/>Critical Data"]
 
+  A --> J["Security<br/>& Monitoring"]
+  J --> K["Auth +<br/>Encryption"]
+  J --> L["nodetool<br/>repair"]
+  J --> M["Metrics<br/>& Alerts"]
 
-
-
-
-
-
-
-
-
-
-                
-              </article>
-            </div>
-          
-          
-<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
-        </div>
-        
-      </main>
-      
-        <footer class="md-footer">
-  
-  <div class="md-footer-meta md-typeset">
-    <div class="md-footer-meta__inner md-grid">
-      <div class="md-copyright">
-  
-  
-    Made with
-    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
-      Material for MkDocs
-    </a>
-  
+  N["Performance"] --> O["Tune JVM<br/>Heap"]
+  N --> P["Monitor<br/>Latency"]
+  N --> Q["Compaction<br/>Strategy"]
 </div>
-      
+
+<hr />
+<h2 id="production-checklist">Production Checklist</h2>
+<p>Before deploying to production:</p>
+<ul>
+<li>[ ] Capacity planning: Estimate data growth, replication factor, RF</li>
+<li>[ ] Consistency levels: Chosen based on durability/latency requirements</li>
+<li>[ ] Backup strategy: Regular backups, test restoration</li>
+<li>[ ] Monitoring: Set up alerts for latency, GC, disk, tombstones</li>
+<li>[ ] Authentication: Enabled, strong passwords</li>
+<li>[ ] Encryption: In transit for sensitive data</li>
+<li>[ ] Repair schedule: Weekly or monthly incremental repair</li>
+<li>[ ] Compaction strategy: Selected based on workload (size-tiered, leveled, etc.)</li>
+<li>[ ] TTL policies: Defined for temporary data</li>
+<li>[ ] Testing: Load testing, failure scenario testing</li>
+<li>[ ] Documentation: Runbooks, emergency procedures</li>
+<li>[ ] Training: Team familiar with nodetool, troubleshooting</li>
+</ul>
+<hr />
+<h2 id="summary">Summary</h2>
+<ul>
+<li><strong>Hot Partitions</strong>: Design composite partition keys or use sharding; monitor node balance.</li>
+<li><strong>Multi-DC</strong>: Use NetworkTopologyStrategy and LOCAL_QUORUM for fast local operations.</li>
+<li><strong>Security</strong>: Enable auth, enforce strong passwords, encrypt transit and rest.</li>
+<li><strong>Monitoring</strong>: Track latency, GC, compaction, tombstones; use nodetool for cluster health.</li>
+<li><strong>Repair</strong>: Run weekly/monthly anti-entropy repair to maintain data consistency.</li>
+<li><strong>Tuning</strong>: Adjust heap, memtable, cache settings based on workload and monitoring data.</li>
+</ul></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script src="../../js/bootstrap.bundle.min.js"></script>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js"></script>
+        <script src="https://unpkg.com/mermaid@10.9.0/dist/mermaid.min.js"></script>
+        <script src="../../js/mermaid-init.js"></script>
+        <script src="../../search/main.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
     </div>
-  </div>
-</footer>
-      
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
     </div>
-    <div class="md-dialog" data-md-component="dialog">
-      <div class="md-dialog__inner md-typeset"></div>
-    </div>
-    
-    
-    
-      
-      
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
-    
-    
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
-      
-    
-  </body>
+</div>
+
+    </body>
 </html>

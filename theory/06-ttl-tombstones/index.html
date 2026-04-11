@@ -1,782 +1,631 @@
-
-<!doctype html>
-<html lang="en" class="no-js">
-  <head>
-    
-      <meta charset="utf-8">
-      <meta name="viewport" content="width=device-width,initial-scale=1">
-      
-        <meta name="description" content="Cassandra CQL labs and Spring Boot learning path">
-      
-      
-      
-      
-        <link rel="prev" href="../05-consistency-lwt-batch/">
-      
-      
-        <link rel="next" href="../07-aggregation-counters/">
-      
-      
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         
-      
-      
-      <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
-    
-    
-      
+        
+        
+        <link rel="shortcut icon" href="../../img/favicon.ico">
         <title>TTL & Tombstones - Cassandra Learning Labs</title>
-      
-    
-    
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
-      
-      
+        <link href="../../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../../css/fontawesome.min.css" rel="stylesheet">
+        <link href="../../css/brands.min.css" rel="stylesheet">
+        <link href="../../css/solid.min.css" rel="stylesheet">
+        <link href="../../css/v4-font-face.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link id="hljs-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atelier-forest-light.min.css" >
+        <link id="hljs-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css" disabled>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script> 
+    </head>
 
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="../..">Cassandra Learning Labs</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
 
-    
-    
-      
-    
-    
-      
-        
-        
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
-        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
-      
-    
-    
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
-    
-      
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="nav-item">
+                                <a href="../.." class="nav-link">Home</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle active" aria-current="page" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Theory</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../01-nosql-and-cassandra/" class="dropdown-item">NoSQL & Cassandra</a>
+</li>
+                                    
+<li>
+    <a href="../02-core-concepts/" class="dropdown-item">Core Concepts</a>
+</li>
+                                    
+<li>
+    <a href="../03-data-modeling/" class="dropdown-item">Data Modeling</a>
+</li>
+                                    
+<li>
+    <a href="../04-indexes-and-mv/" class="dropdown-item">Indexes & Materialized Views</a>
+</li>
+                                    
+<li>
+    <a href="../05-consistency-lwt-batch/" class="dropdown-item">Consistency, LWT & Batching</a>
+</li>
+                                    
+<li>
+    <a href="./" class="dropdown-item active" aria-current="page">TTL & Tombstones</a>
+</li>
+                                    
+<li>
+    <a href="../07-aggregation-counters/" class="dropdown-item">Aggregation & Counters</a>
+</li>
+                                    
+<li>
+    <a href="../08-advanced/" class="dropdown-item">Advanced Topics</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../../labs-overview/" class="nav-link">Labs Overview</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../../interview-prep/" class="nav-link">Interview Prep</a>
+                            </li>
+                        </ul>
 
-    
-    
-  </head>
-  
-  
-    <body dir="ltr">
-  
-    
-    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
-    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
-    <label class="md-overlay" for="__drawer"></label>
-    <div data-md-component="skip">
-      
-        
-        <a href="#ttl-tombstones" class="md-skip">
-          Skip to content
-        </a>
-      
-    </div>
-    <div data-md-component="announce">
-      
-    </div>
-    
-    
-      
-
-  
-
-<header class="md-header md-header--shadow" data-md-component="header">
-  <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="Cassandra Learning Labs" class="md-header__button md-logo" aria-label="Cassandra Learning Labs" data-md-component="logo">
-      
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
-
-    </a>
-    <label class="md-header__button md-icon" for="__drawer">
-      
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
-    </label>
-    <div class="md-header__title" data-md-component="header-title">
-      <div class="md-header__ellipsis">
-        <div class="md-header__topic">
-          <span class="md-ellipsis">
-            Cassandra Learning Labs
-          </span>
+                    <ul class="nav navbar-nav ms-md-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="../05-consistency-lwt-batch/" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../07-aggregation-counters/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
         </div>
-        <div class="md-header__topic" data-md-component="header-topic">
-          <span class="md-ellipsis">
-            
-              TTL & Tombstones
-            
-          </span>
-        </div>
-      </div>
-    </div>
-    
-    
-      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
-    
-    
-    
-      
-      
-        <label class="md-header__button md-icon" for="__search">
-          
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
-        </label>
-        <div class="md-search" data-md-component="search" role="dialog">
-  <label class="md-search__overlay" for="__search"></label>
-  <div class="md-search__inner" role="search">
-    <form class="md-search__form" name="search">
-      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
-      <label class="md-search__icon md-icon" for="__search">
-        
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
-        
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
-      </label>
-      <nav class="md-search__options" aria-label="Search">
-        
-        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
-          
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-bs-toggle="collapse" data-bs-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
         </button>
-      </nav>
-      
-    </form>
-    <div class="md-search__output">
-      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
-        <div class="md-search-result" data-md-component="search-result">
-          <div class="md-search-result__meta">
-            Initializing search
-          </div>
-          <ol class="md-search-result__list" role="presentation"></ol>
-        </div>
-      </div>
     </div>
-  </div>
-</div>
-      
+
     
-    
-  </nav>
-  
-</header>
-    
-    <div class="md-container" data-md-component="container">
-      
-      
-        
-          
-        
-      
-      <main class="md-main" data-md-component="main">
-        <div class="md-main__inner md-grid">
-          
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
+        <ul class="nav flex-column">
             
-              
-              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
-                <div class="md-sidebar__scrollwrap">
-                  <div class="md-sidebar__inner">
-                    
-
-
-
-<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
-  <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="Cassandra Learning Labs" class="md-nav__button md-logo" aria-label="Cassandra Learning Labs" data-md-component="logo">
-      
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
-
-    </a>
-    Cassandra Learning Labs
-  </label>
-  
-  <ul class="md-nav__list" data-md-scrollfix>
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../.." class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Home
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-    
-  
-  
-  
-    
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
-        
-          
-          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Theory
-  
-
-    
-  </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_2">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Theory
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../01-nosql-and-cassandra/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    NoSQL & Cassandra
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../02-core-concepts/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Core Concepts
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../03-data-modeling/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Data Modeling
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../04-indexes-and-mv/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Indexes & Materialized Views
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../05-consistency-lwt-batch/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Consistency, LWT & Batching
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-    
-  
-  
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    TTL & Tombstones
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    TTL & Tombstones
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#key-points" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Key Points
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#example-diagram" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Example Diagram
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#summary" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Summary
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../07-aggregation-counters/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Aggregation & Counters
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../08-advanced/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Advanced Topics
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../labs-overview/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Labs Overview
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../interview-prep/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Interview Prep
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-    
-  </ul>
-</nav>
-                  </div>
-                </div>
-              </div>
-            
-            
-              
-              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
-                <div class="md-sidebar__scrollwrap">
-                  <div class="md-sidebar__inner">
-                    
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#key-points" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Key Points
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#example-diagram" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Example Diagram
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#summary" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Summary
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-                  </div>
-                </div>
-              </div>
-            
-          
-          
-            <div class="md-content" data-md-component="content">
-              
-              <article class="md-content__inner md-typeset">
-                
-                  
-
-
+            <li class="nav-item" data-bs-level="1"><a href="#ttl-tombstones" class="nav-link">TTL &amp; Tombstones</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-bs-level="2"><a href="#definitions-core-concepts" class="nav-link">Definitions &amp; Core Concepts</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#ttl-in-practice" class="nav-link">TTL in Practice</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#tombstones-compaction" class="nav-link">Tombstones &amp; Compaction</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#ttl-vs-delete-comparison" class="nav-link">TTL vs DELETE: Comparison</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#real-world-scenarios" class="nav-link">Real-World Scenarios</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#example-diagram" class="nav-link">Example Diagram</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#summary" class="nav-link">Summary</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
 
 <h1 id="ttl-tombstones">TTL &amp; Tombstones</h1>
-<p>Cassandra supports automatic data expiration (TTL) and uses tombstones to mark deletions.</p>
-<h2 id="key-points">Key Points</h2>
-<ul>
-<li><strong>TTL</strong>: Automatically expires data after a set period.</li>
-<li><strong>Tombstones</strong>: Markers for deleted/expired data; too many degrade performance.</li>
-<li><strong>Compaction</strong>: Removes tombstones and reclaims space.</li>
-</ul>
-<h2 id="example-diagram">Example Diagram</h2>
-<div class="highlight"><pre><span></span><code>graph TD;
-  Data--&gt;|TTL expires|Tombstone
-  Tombstone--&gt;|Compaction|Removed
+<p>Cassandra supports automatic data expiration (TTL) and uses tombstones to mark deletions. Understanding these concepts is essential for managing data lifecycle and preventing performance degradation.</p>
+<h2 id="definitions-core-concepts">Definitions &amp; Core Concepts</h2>
+<h3 id="ttl-time-to-live">TTL (Time To Live)</h3>
+<p><strong>Definition</strong>: TTL is a mechanism in Cassandra that automatically deletes data after a specified duration, without requiring explicit deletion commands.</p>
+<p><strong>What it means</strong>:
+- Set when writing data: "Keep this for 3600 seconds, then delete"
+- After TTL expires, data is effectively deleted
+- No manual cleanup required
+- Can be set per row, cell, or column</p>
+<h3 id="how-ttl-works">How TTL Works</h3>
+<p><strong>Scenario: Session Data</strong>
+<div class="highlight"><pre><span></span><code>CREATE TABLE sessions (
+  session_id UUID PRIMARY KEY,
+  user_id UUID,
+  token TEXT,
+  created_at TIMESTAMP
+);
+
+-- Insert with TTL: expire after 1 hour (3600 seconds)
+INSERT INTO sessions (session_id, user_id, token, created_at)
+VALUES (sess123, user456, &#39;token_xyz&#39;, now())
+USING TTL 3600;
+
+-- Timeline:
+// T=0 seconds: Data inserted, TTL countdown starts
+// T=1799: Data still available
+// T=3600: TTL expires
+// T=3601: Data is marked for deletion (becomes tombstone)
+// T=3601+gc_grace_seconds: Data is physically deleted
+</code></pre></div></p>
+<p><strong>TTL at Column Level</strong>
+<div class="highlight"><pre><span></span><code>INSERT INTO sessions (session_id, user_id, token)
+VALUES (sess123, user456, &#39;token_xyz&#39;)
+USING TTL 3600;
+
+-- Only token expires after 3600 seconds
+-- session_id and user_id stay (no TTL on their insert)
+</code></pre></div></p>
+<h3 id="tombstones">Tombstones</h3>
+<p><strong>Definition</strong>: A tombstone is a marker left behind when data is deleted or expires. It prevents reappearance of deleted data during replication.</p>
+<p><strong>What it means</strong>:
+- When data is deleted, Cassandra doesn't immediately erase it
+- Instead, writes a tombstone record (like a "deleted" marker)
+- Tombstone prevents deleted data from reappearing due to eventual consistency
+- Eventually, tombstones are removed during compaction</p>
+<h3 id="why-tombstones-are-needed">Why Tombstones Are Needed</h3>
+<p><strong>The Problem Without Tombstones</strong>:
+<div class="highlight"><pre><span></span><code>Scenario: Eventual consistency with deletion
+
+Node1: DELETE user &#39;alice&#39;
+       user &#39;alice&#39; is deleted from Node1
+
+Meanwhile:
+Node2: Still has user &#39;alice&#39; (hasn&#39;t received delete yet)
+Node3: Still has user &#39;alice&#39;
+
+Later, replication repairs Node1:
+Node2 replicates its copy to Node1
+Node1: Oh! User &#39;alice&#39; is back (reappeared!)
+
+Result: Deleted data resurrects
+</code></pre></div></p>
+<p><strong>With Tombstones</strong>:
+<div class="highlight"><pre><span></span><code>Node1: DELETE user &#39;alice&#39;
+       → Writes tombstone: &quot;user &#39;alice&#39; was deleted at T=1000&quot;
+
+Node2: Still has user &#39;alice&#39; (pre-deletion)
+Node3: Still has user &#39;alice&#39;
+
+Later, replication:
+Node2 replicates user &#39;alice&#39; to Node1
+Node1: This is from T=500, tombstone is from T=1000
+       Tombstone wins (latest write)
+       Data stays deleted
+
+Result: Deletion is durable across replicas
+</code></pre></div></p>
+<hr />
+<h2 id="ttl-in-practice">TTL in Practice</h2>
+<h3 id="setting-ttl">Setting TTL</h3>
+<p><strong>Per-Write TTL</strong>
+<div class="highlight"><pre><span></span><code>-- Insert with 24-hour TTL
+INSERT INTO user_temp_codes (user_id, code)
+VALUES (user123, &#39;code_abc&#39;)
+USING TTL 86400;
+
+-- Update with TTL
+UPDATE user_temp_codes
+SET code = &#39;code_xyz&#39;
+WHERE user_id = user123
+USING TTL 86400;
+</code></pre></div></p>
+<p><strong>Default TTL in Table</strong>
+<div class="highlight"><pre><span></span><code>-- Set default TTL for entire table
+CREATE TABLE session_data (
+  session_id UUID PRIMARY KEY,
+  user_id UUID,
+  data TEXT
+) WITH default_time_to_live = 3600;
+
+-- All writes default to 3600 second TTL (unless overridden)
+INSERT INTO session_data ...;  -- Automatically gets 3600s TTL
+INSERT INTO session_data USING TTL 7200 ...;  -- Override default
+</code></pre></div></p>
+<p><strong>No TTL (Live Forever)</strong>
+<div class="highlight"><pre><span></span><code>-- Explicitly set TTL to 0 (no expiration)
+INSERT INTO users (user_id, name)
+VALUES (user123, &#39;Alice&#39;)
+USING TTL 0;
+
+-- Can also unset TTL by writing with no USING clause:
+INSERT INTO users (user_id, name)
+VALUES (user123, &#39;Alice&#39;);
+</code></pre></div></p>
+<h3 id="ttl-use-cases">TTL Use Cases</h3>
+<p>✅ <strong>Good use cases</strong>:
+- <strong>Sessions</strong>: Expire user sessions after inactivity (24-48 hours)
+- <strong>Temporary tokens</strong>: OTP codes, password reset links (5-30 minutes)
+- <strong>Cache-like data</strong>: Non-critical data that can be regenerated
+- <strong>Time-limited offers</strong>: Promotions valid for limited time
+- <strong>Audit logs</strong>: Keep recent logs (1-2 years), auto-delete old ones
+- <strong>Device tokens</strong>: Mobile push tokens expire/rotate</p>
+<p>❌ <strong>Avoid TTL for</strong>:
+- <strong>Critical data</strong>: User profiles, account info
+- <strong>Financial records</strong>: Transactions, billing data
+- <strong>Legal/compliance</strong>: Data with retention requirements</p>
+<hr />
+<h2 id="tombstones-compaction">Tombstones &amp; Compaction</h2>
+<h3 id="the-tombstone-problem">The Tombstone Problem</h3>
+<p><strong>Scenario: High Delete Velocity</strong>
+<div class="highlight"><pre><span></span><code>Application: &quot;Delete completed orders&quot;
+100,000 orders per day are marked as completed
+Each deletion → writes a tombstone
+
+After 30 days:
+- 3 million tombstones in table
+- Table size grows (tombstones take space)
+- Read performance degrades (must scan tombstones)
+- Compaction must process millions of tombstones
+</code></pre></div></p>
+<p><strong>Performance Impact</strong>:
+<div class="highlight"><pre><span></span><code>Query: SELECT * FROM orders WHERE customer_id = &#39;cust123&#39;
+Table: 1M rows, 500K tombstones
+
+Cassandra:
+1. Reads partition for cust123 (might be 10K rows)
+2. Has to scan through tombstones to find actual data
+3. Tombstone overhead = more disk IO, more memory, slower reads
+
+Impact: Read latency increases as tombstone ratio increases
+</code></pre></div></p>
+<h3 id="gc_grace_seconds">gc_grace_seconds</h3>
+<p><strong>Definition</strong>: <code>gc_grace_seconds</code> is the time window after which tombstones are eligible for deletion.</p>
+<p><strong>What it means</strong>:
+- Default is 864000 seconds (10 days)
+- After a tombstone is written, Cassandra waits gc_grace_seconds
+- Then compaction can remove the tombstone
+- If replica comes back online within gc_grace_seconds, it sees tombstone (deletion is consistent)
+- If replica comes back after gc_grace_seconds, deleted data might reappear (resurrection)</p>
+<p><strong>Example</strong>:
+<div class="highlight"><pre><span></span><code>T=0: Data deleted, tombstone written
+T=0-86400 (10 days): Tombstone is protected, read repairs still work
+T=86401: Tombstone eligible for removal during compaction
+T=86401+: Tombstone might be deleted (storage reclaimed)
+
+If Node1 went offline at T=0 and comes back at T=85000:
+  → Sees tombstone, deletion is consistent ✓
+
+If Node1 went offline at T=0 and comes back at T=90000:
+  → Tombstone already deleted, sees original data (RESURRECTION!) ✗
+</code></pre></div></p>
+<h3 id="compaction">Compaction</h3>
+<p><strong>Definition</strong>: Compaction is a background process that:
+1. Merges multiple SSTable files
+2. Removes tombstones older than gc_grace_seconds
+3. Reclaims disk space
+4. Improves read performance</p>
+<p><strong>Types of Compaction</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Merge</th>
+<th>Tombstone Removal</th>
+<th>Use Case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>SizeTiered</strong></td>
+<td>Smaller SSTables</td>
+<td>Yes</td>
+<td>Default, general purpose</td>
+</tr>
+<tr>
+<td><strong>Leveled</strong></td>
+<td>Keep levels balanced</td>
+<td>Yes</td>
+<td>Write-heavy, predictable</td>
+</tr>
+<tr>
+<td><strong>TimeWindow</strong></td>
+<td>By time window</td>
+<td>Yes</td>
+<td>Time-series data</td>
+</tr>
+</tbody>
+</table>
+<h3 id="managing-tombstones">Managing Tombstones</h3>
+<p>✅ <strong>Best Practices</strong>:</p>
+<ol>
+<li>
+<p><strong>Understand your delete pattern</strong>
+   <div class="highlight"><pre><span></span><code>-- If deleting &gt;10% of data: Tombstone ratio becomes problematic
+-- Monitor: SELECT COUNT(*) and compare to delete rate
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Use TTL instead of explicit deletes</strong>
+   <div class="highlight"><pre><span></span><code>-- TTL is optimized for mass expiration
+INSERT ... USING TTL 86400;
+
+-- Explicit deletion creates individual tombstones
+DELETE FROM table WHERE pk = &#39;value&#39;;
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Lower gc_grace_seconds for high-delete workloads</strong>
+   <div class="highlight"><pre><span></span><code>CREATE TABLE logs (
+  log_id UUID PRIMARY KEY,
+  message TEXT
+) WITH gc_grace_seconds = 86400;  -- 1 day instead of 10
+
+-- But: Risk of resurrection if nodes are down &gt;1 day
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Monitor tombstone ratio</strong>
+   <div class="highlight"><pre><span></span><code>Use nodetool cfstats to check:
+- SSTable count
+- Tombstone count / total rows
+- Compaction rate
+
+Alert if tombstone ratio &gt; 50%
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Don't query deleted data repeatedly</strong>
+   <div class="highlight"><pre><span></span><code>-- BAD: Repeatedly checking if row exists (tombstone reading)
+SELECT * FROM users WHERE user_id = &#39;deleted_user&#39;;  // Returns nothing, reads tombstone
+
+-- Better: Track deletion separately or use different access pattern
+</code></pre></div></p>
+</li>
+</ol>
+<hr />
+<h2 id="ttl-vs-delete-comparison">TTL vs DELETE: Comparison</h2>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>TTL</th>
+<th>DELETE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Trigger</strong></td>
+<td>Time</td>
+<td>Explicit command</td>
+</tr>
+<tr>
+<td><strong>When deleted</strong></td>
+<td>After expiry</td>
+<td>Immediately</td>
+</tr>
+<tr>
+<td><strong>Tombstone</strong></td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><strong>Best for</strong></td>
+<td>Expiring data</td>
+<td>One-off deletions</td>
+</tr>
+<tr>
+<td><strong>Performance</strong></td>
+<td>Optimized for mass expiry</td>
+<td>Individual tombstones</td>
+</tr>
+<tr>
+<td><strong>Use case</strong></td>
+<td>Sessions, tokens, cache</td>
+<td>Specific record deletion</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="real-world-scenarios">Real-World Scenarios</h2>
+<h3 id="scenario-1-user-sessions">Scenario 1: User Sessions</h3>
+<div class="highlight"><pre><span></span><code>CREATE TABLE user_sessions (
+  session_id UUID PRIMARY KEY,
+  user_id UUID,
+  token TEXT,
+  created_at TIMESTAMP
+) WITH default_time_to_live = 3600;  -- 1-hour sessions
+
+-- Insert session
+INSERT INTO user_sessions (session_id, user_id, token, created_at)
+VALUES (sess123, user456, &#39;token_xyz&#39;, now());
+// Automatically expires after 1 hour
+
+// No need for DELETE command
+// No tombstone accumulation
+// Clean, efficient pattern
 </code></pre></div>
-<h2 id="summary">Summary</h2>
-<p>Use TTL for expiring data, but monitor tombstone buildup to avoid performance issues.</p>
+<h3 id="scenario-2-event-log-with-archive">Scenario 2: Event Log with Archive</h3>
+<div class="highlight"><pre><span></span><code>CREATE TABLE event_log (
+  event_id UUID PRIMARY KEY,
+  timestamp TIMESTAMP,
+  message TEXT
+) WITH default_time_to_live = 7776000;  // 90 days
 
+INSERT INTO event_log (event_id, timestamp, message)
+VALUES (evt123, now(), &#39;User logged in&#39;);
+// After 90 days, automatically deleted
 
+// Separately, run batch job to archive to long-term storage:
+// SELECT * FROM event_log WHERE timestamp &lt; 90_days_ago;
+// Archive to S3/HDFS, then DELETE from Cassandra
+</code></pre></div>
+<h3 id="scenario-3-avoiding-tombstone-explosion">Scenario 3: Avoiding Tombstone Explosion</h3>
+<div class="highlight"><pre><span></span><code>❌ BAD: Mass delete with explicit commands
+BATCH:
+  DELETE FROM completed_orders WHERE order_id = &#39;ord1&#39;;
+  DELETE FROM completed_orders WHERE order_id = &#39;ord2&#39;;
+  ... (1M times)
+APPLY BATCH;
 
+Result: 1M individual tombstones, compaction nightmare
 
+✅ GOOD: Use time-bucket + TTL
+CREATE TABLE completed_orders (
+  completion_date DATE,
+  order_id UUID,
+  ...
+  PRIMARY KEY (completion_date, order_id)
+) WITH default_time_to_live = 2592000;  // 30 days
 
+When order completes:
+INSERT INTO completed_orders
+  (completion_date, order_id, ...)
+VALUES (today(), order_id, ...);
 
+After 30 days: Entire partition expires automatically
+No individual tombstones
+Efficient cleanup
+</code></pre></div>
+<hr />
+<h2 id="example-diagram">Example Diagram</h2>
+<div class="mermaid">
+graph TD;
+  A["Data Lifecycle"] --> B["INSERT"]
+  B --> C{"Set TTL?"}
 
+  C -->|"Yes"| D["Countdown starts"]
+  D --> E["Time expires"]
+  E --> F["Tombstone written"]
+  F --> G["Read-repair delivers tombstone<br/>to replicas"]
 
+  C -->|"No"| H["Data persists"]
+  H --> I{"Explicit DELETE?"}
 
+  I -->|"Yes"| F
+  I -->|"No"| J["Forever"]
 
+  F --> K["gc_grace_seconds"]
+  K --> L{"Compaction runs?"}
+  L -->|"Yes"| M["Tombstone deleted<br/>Space reclaimed"]
+  L -->|"No"| N["Tombstone persists"]
 
-
-                
-              </article>
-            </div>
-          
-          
-<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
-        </div>
-        
-      </main>
-      
-        <footer class="md-footer">
-  
-  <div class="md-footer-meta md-typeset">
-    <div class="md-footer-meta__inner md-grid">
-      <div class="md-copyright">
-  
-  
-    Made with
-    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
-      Material for MkDocs
-    </a>
-  
+  N --> O["Tombstone ratio increases<br/>Read perf degrades"]
 </div>
-      
+
+<hr />
+<h2 id="summary">Summary</h2>
+<ul>
+<li><strong>TTL</strong>: Automatic expiration after time period; recommended for session data, tokens, temporary info.</li>
+<li><strong>Tombstones</strong>: Markers for deleted/expired data; necessary for consistency but accumulate with deletes.</li>
+<li><strong>Compaction</strong>: Background process that removes old tombstones; requires gc_grace_seconds to pass first.</li>
+<li><strong>Best practice</strong>: Use TTL for mass expiration; minimize explicit deletes; monitor tombstone ratio.</li>
+<li><strong>Trade-off</strong>: gc_grace_seconds vs. resurrection risk; longer window = safer, shorter = faster cleanup.</li>
+<li><strong>Monitor</strong>: Watch tombstone ratios and compaction; adjust gc_grace_seconds based on workload.</li>
+</ul></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script src="../../js/bootstrap.bundle.min.js"></script>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js"></script>
+        <script src="https://unpkg.com/mermaid@10.9.0/dist/mermaid.min.js"></script>
+        <script src="../../js/mermaid-init.js"></script>
+        <script src="../../search/main.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
     </div>
-  </div>
-</footer>
-      
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
     </div>
-    <div class="md-dialog" data-md-component="dialog">
-      <div class="md-dialog__inner md-typeset"></div>
-    </div>
-    
-    
-    
-      
-      
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
-    
-    
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
-      
-    
-  </body>
+</div>
+
+    </body>
 </html>
