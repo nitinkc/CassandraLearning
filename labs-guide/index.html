@@ -1,95 +1,758 @@
-<!DOCTYPE html>
-<html lang="en" data-bs-theme="light">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Cassandra CQL labs and Spring Boot learning path">
+      
+      
+      
+      
+      
+      
         
-        
-        
-        <link rel="shortcut icon" href="../img/favicon.ico">
-        <title>Labs Guide - Cassandra Learning Labs</title>
-        <link href="../css/bootstrap.min.css" rel="stylesheet">
-        <link href="../css/fontawesome.min.css" rel="stylesheet">
-        <link href="../css/brands.min.css" rel="stylesheet">
-        <link href="../css/solid.min.css" rel="stylesheet">
-        <link href="../css/v4-font-face.min.css" rel="stylesheet">
-        <link href="../css/base.css" rel="stylesheet">
-        <link id="hljs-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atelier-forest-light.min.css" >
-        <link id="hljs-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css" disabled>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
-        <script>hljs.highlightAll();</script> 
-    </head>
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Cassandra CQL Labs — Guided Learning Path - Cassandra Learning Labs</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
 
-    <body>
-        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
-            <div class="container">
-                <a class="navbar-brand" href="..">Cassandra Learning Labs</a>
-                <!-- Expander button -->
-                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-
-                <!-- Expanded navigation -->
-                <div id="navbar-collapse" class="navbar-collapse collapse">
-                        <!-- Main navigation -->
-                        <ul class="nav navbar-nav">
-                            <li class="nav-item">
-                                <a href=".." class="nav-link">Home</a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="./" class="nav-link active" aria-current="page">Labs Guide</a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="../interview-questions/" class="nav-link">Interview Questions</a>
-                            </li>
-                        </ul>
-
-                    <ul class="nav navbar-nav ms-md-auto">
-                        <li class="nav-item">
-                            <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#mkdocs_search_modal">
-                                <i class="fa fa-search"></i> Search
-                            </a>
-                        </li>
-                            <li class="nav-item">
-                                <a rel="prev" href=".." class="nav-link">
-                                    <i class="fa fa-arrow-left"></i> Previous
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a rel="next" href="../interview-questions/" class="nav-link">
-                                    Next <i class="fa fa-arrow-right"></i>
-                                </a>
-                            </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <div class="container">
-            <div class="row">
-                    <div class="col-md-3"><div class="navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
-    <div class="navbar-header">
-        <button type="button" class="navbar-toggler collapsed" data-bs-toggle="collapse" data-bs-target="#toc-collapse" title="Table of Contents">
-            <span class="fa fa-angle-down"></span>
-        </button>
-    </div>
 
     
-    <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
-        <ul class="nav flex-column">
-            
-            <li class="nav-item" data-bs-level="1"><a href="#cassandra-cql-labs-guided-learning-path" class="nav-link">Cassandra CQL Labs — Guided Learning Path</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-        </ul>
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#cassandra-cql-labs-guided-learning-path" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
-</div></div>
-                    <div class="col-md-9" role="main">
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Cassandra Learning Labs" class="md-header__button md-logo" aria-label="Cassandra Learning Labs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Cassandra Learning Labs
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Cassandra CQL Labs — Guided Learning Path
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Cassandra Learning Labs" class="md-nav__button md-logo" aria-label="Cassandra Learning Labs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Cassandra Learning Labs
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Theory
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Theory
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../theory/01-nosql-and-cassandra/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NoSQL & Cassandra
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../theory/02-core-concepts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Core Concepts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../theory/03-data-modeling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data Modeling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../theory/04-indexes-and-mv/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Indexes & Materialized Views
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../theory/05-consistency-lwt-batch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Consistency, LWT & Batching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../theory/06-ttl-tombstones/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TTL & Tombstones
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../theory/07-aggregation-counters/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Aggregation & Counters
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../theory/08-advanced/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Advanced Topics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../labs-overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Labs Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../interview-prep/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Interview Prep
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#cassandra-learning-topics-systematic-interview-prep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cassandra Learning Topics (Systematic Interview Prep)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Cassandra Learning Topics (Systematic Interview Prep)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-introduction-to-nosql-and-cassandra" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Introduction to NoSQL and Cassandra
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-core-cassandra-concepts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Core Cassandra Concepts
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-data-modeling-in-cassandra" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Data Modeling in Cassandra
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-indexes-and-materialized-views" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Indexes and Materialized Views
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-consistency-lightweight-transactions-and-batching" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Consistency, Lightweight Transactions, and Batching
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-ttl-tombstones-and-deletes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. TTL, Tombstones, and Deletes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-aggregation-filtering-and-counters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Aggregation, Filtering, and Counters
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#8-advanced-topics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Advanced Topics
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
 
 <h1 id="cassandra-cql-labs-guided-learning-path">Cassandra CQL Labs — Guided Learning Path</h1>
-<p>These labs are incremental and intentionally query-first. Follow them in order to build a mental model of Cassandra's data modeling choices, trade-offs, and operational concerns.</p>
+<h2 id="cassandra-learning-topics-systematic-interview-prep">Cassandra Learning Topics (Systematic Interview Prep)</h2>
+<h3 id="1-introduction-to-nosql-and-cassandra">1. Introduction to NoSQL and Cassandra</h3>
+<ul>
+<li>What is NoSQL? Types of NoSQL databases</li>
+<li>Cassandra’s architecture and use cases</li>
+<li>CAP theorem and Cassandra’s trade-offs</li>
+</ul>
+<h3 id="2-core-cassandra-concepts">2. Core Cassandra Concepts</h3>
+<ul>
+<li>Cluster, node, data center</li>
+<li>Partitioning: partition key, token ring, data distribution</li>
+<li>Clustering columns: on-disk order, range queries</li>
+<li>Replication: replication factor, consistency levels</li>
+<li>Hinted handoff, read/write path, tunable consistency</li>
+<li>Lab: 01_keyspace_basics.cql, 02_partitioning_clustering.cql</li>
+</ul>
+<h3 id="3-data-modeling-in-cassandra">3. Data Modeling in Cassandra</h3>
+<ul>
+<li>Query-first design: denormalization, query-based tables</li>
+<li>Primary key design: single vs. composite keys</li>
+<li>Wide rows, time-series modeling, bounding partitions</li>
+<li>Lab: 03_modeling_by_query.cql</li>
+</ul>
+<h3 id="4-indexes-and-materialized-views">4. Indexes and Materialized Views</h3>
+<ul>
+<li>Secondary indexes: pros, cons, and anti-patterns</li>
+<li>Materialized views: use cases and limitations</li>
+<li>Lab: 04_indexes_and_mv.cql</li>
+</ul>
+<h3 id="5-consistency-lightweight-transactions-and-batching">5. Consistency, Lightweight Transactions, and Batching</h3>
+<ul>
+<li>Consistency levels: ONE, QUORUM, ALL, LOCAL_QUORUM, etc.</li>
+<li>Lightweight transactions (LWT): compare-and-set, use cases</li>
+<li>Batching: atomicity, pitfalls</li>
+<li>Lab: 05_consistency_lwt_batch.cql</li>
+</ul>
+<h3 id="6-ttl-tombstones-and-deletes">6. TTL, Tombstones, and Deletes</h3>
+<ul>
+<li>TTL (time-to-live): expiring data</li>
+<li>Tombstones: delete markers, compaction, anti-patterns</li>
+<li>Lab: 06_ttl_tombstones.cql</li>
+</ul>
+<h3 id="7-aggregation-filtering-and-counters">7. Aggregation, Filtering, and Counters</h3>
+<ul>
+<li>Aggregation limitations, ALLOW FILTERING, paging</li>
+<li>Counters: use cases and caveats</li>
+<li>Lab: 07_aggregation_filtering.cql</li>
+</ul>
+<h3 id="8-advanced-topics">8. Advanced Topics</h3>
+<ul>
+<li>Data distribution, hot partitions, anti-patterns</li>
+<li>Multi-DC replication, network topology</li>
+<li>Security basics: authentication, authorization</li>
+<li>Monitoring and repair basics</li>
+<li>Placeholder: Add labs for advanced topics as needed (e.g., multi-DC, security)</li>
+</ul>
+<hr />
+<p>These topics are mapped to the hands-on labs below. For each topic, review the theory, then complete the corresponding lab for practical understanding.</p>
 <p>Environment (assumptions)
 - Cassandra 5.x (local Docker-based labs).
 - Java 21 / Spring Boot app lives in <code>spring-boot-app/</code> (used separately from the labs).
@@ -266,85 +929,214 @@ CREATE KEYSPACE IF NOT EXISTS cassandra_labs_nets WITH replication = {'class':'N
 - If a node fails with "Seed provider couldn't lookup host cassandra" or "The seed provider lists no seeds":
   - Check service hostnames in <code>docker compose ps</code> and ensure they match <code>CASSANDRA_SEEDS</code> entries.
   - Ensure any entry that lists a DC name in the keyspace uses exactly the same DC value present in node environment variables.</p>
-<p>Files you may want to inspect or run
-- <code>docker/docker-compose.yml</code> — updated compose for a 2-node demo.
-- <code>docker/init.cql</code> — consolidated init script (contains <code>orders_by_user</code> table and demo data). You can run it with the init container or copy individual lab files into the running container.
-- <code>labs/08_relational_to_query_first.cql</code> — new file with step-by-step conversion and sample queries (safe to re-run).</p></div>
-            </div>
-        </div>
+<h1 id="cassandra-tutorial-from-basics-to-advanced-with-self-check-questions">Cassandra Tutorial: From Basics to Advanced (with Self-Check Questions)</h1>
+<h3 id="1-nosql-and-cassandra-basics">1. NoSQL and Cassandra Basics</h3>
+<p>Cassandra is a distributed NoSQL database designed for high availability and scalability. Unlike relational databases, Cassandra uses a flexible schema and is optimized for fast writes and horizontal scaling.</p>
+<p><strong>Key Concepts:</strong>
+- NoSQL databases: schema-less, distributed, designed for scale
+- Cassandra’s architecture: peer-to-peer, decentralized
+- CAP theorem: Cassandra favors Availability and Partition tolerance (AP)</p>
+<p><strong>Self-Check:</strong>
+- What is NoSQL? How does Cassandra differ from relational databases?
+- What are the main use cases for Cassandra?
+- What is the CAP theorem, and where does Cassandra fit?</p>
+<hr />
+<h3 id="2-core-cassandra-concepts_1">2. Core Cassandra Concepts</h3>
+<p>Cassandra clusters consist of nodes grouped into data centers. Data is distributed using partition keys and replicated for fault tolerance.</p>
+<p><strong>Key Concepts:</strong>
+- Cluster, node, data center
+- Partition key: determines data placement and distribution
+- Clustering columns: define on-disk order within a partition
+- Replication factor: number of copies per data center
+- Consistency levels: control read/write guarantees</p>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">orders_by_user</span><span class="w"> </span><span class="p">(</span>
+<span class="w">  </span><span class="n">user_id</span><span class="w"> </span><span class="n">UUID</span><span class="p">,</span>
+<span class="w">  </span><span class="n">order_id</span><span class="w"> </span><span class="n">TIMEUUID</span><span class="p">,</span>
+<span class="w">  </span><span class="n">amount</span><span class="w"> </span><span class="nb">decimal</span><span class="p">,</span>
+<span class="w">  </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span><span class="w"> </span><span class="n">order_id</span><span class="p">)</span>
+<span class="p">);</span>
+</code></pre></div>
+- Here, <code>user_id</code> is the partition key; <code>order_id</code> is a clustering column.</p>
+<p><strong>Self-Check:</strong>
+- What is a cluster, node, and data center in Cassandra?
+- What is a partition key, and why is it critical?
+- How do clustering columns affect on-disk ordering and query patterns?
+- How does replication factor impact availability and reads/writes?
+- What is tunable consistency? How do consistency levels work?
+- What are common causes of hot partitions?</p>
+<p><strong>Lab:</strong> 01_keyspace_basics.cql, 02_partitioning_clustering.cql</p>
+<hr />
+<h3 id="3-data-modeling-and-querying">3. Data Modeling and Querying</h3>
+<p>Cassandra uses query-first, denormalized data modeling. Tables are designed for specific queries, not for normalization.</p>
+<p><strong>Key Concepts:</strong>
+- Query-first design: one table per access pattern
+- Denormalization: duplicate data for fast reads
+- Wide rows: use clustering columns for time-series or ordered data</p>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">users_by_id</span><span class="w"> </span><span class="p">(</span>
+<span class="w">  </span><span class="n">user_id</span><span class="w"> </span><span class="n">UUID</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span>
+<span class="w">  </span><span class="n">email</span><span class="w"> </span><span class="nb">text</span><span class="p">,</span>
+<span class="w">  </span><span class="n">full_name</span><span class="w"> </span><span class="nb">text</span>
+<span class="p">);</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">users_by_email</span><span class="w"> </span><span class="p">(</span>
+<span class="w">  </span><span class="n">email</span><span class="w"> </span><span class="nb">text</span><span class="p">,</span>
+<span class="w">  </span><span class="n">user_id</span><span class="w"> </span><span class="n">UUID</span><span class="p">,</span>
+<span class="w">  </span><span class="n">full_name</span><span class="w"> </span><span class="nb">text</span><span class="p">,</span>
+<span class="w">  </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="p">(</span><span class="n">email</span><span class="p">,</span><span class="w"> </span><span class="n">user_id</span><span class="p">)</span>
+<span class="p">);</span>
+</code></pre></div></p>
+<p><strong>Self-Check:</strong>
+- Why is data modeled by query in Cassandra?
+- When would you denormalize and duplicate data?
+- How do you design tables for time-series data?
+- What is the anti-pattern of using ALLOW FILTERING?
+- How do you handle one-to-many and many-to-many relationships?</p>
+<p><strong>Lab:</strong> 03_modeling_by_query.cql</p>
+<hr />
+<h3 id="4-indexes-and-materialized-views_1">4. Indexes and Materialized Views</h3>
+<p>Cassandra supports secondary indexes and materialized views, but both have trade-offs and should be used carefully.</p>
+<p><strong>Key Concepts:</strong>
+- Secondary indexes: best for low-cardinality, small partitions
+- Materialized views: server-side denormalization, but can drift</p>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">users_by_id</span><span class="p">(</span><span class="n">email</span><span class="p">);</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="n">MATERIALIZED</span><span class="w"> </span><span class="k">VIEW</span><span class="w"> </span><span class="n">users_by_email_mv</span><span class="w"> </span><span class="k">AS</span>
+<span class="w">  </span><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">users_by_id</span>
+<span class="w">  </span><span class="k">WHERE</span><span class="w"> </span><span class="n">email</span><span class="w"> </span><span class="k">IS</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="n">user_id</span><span class="w"> </span><span class="k">IS</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span>
+<span class="w">  </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="p">(</span><span class="n">email</span><span class="p">,</span><span class="w"> </span><span class="n">user_id</span><span class="p">);</span>
+</code></pre></div></p>
+<p><strong>Self-Check:</strong>
+- When should you use a secondary index? When should you avoid it?
+- What are materialized views? What are their pros and cons?
+- How do you keep denormalized tables in sync?</p>
+<p><strong>Lab:</strong> 04_indexes_and_mv.cql</p>
+<hr />
+<h3 id="5-consistency-lightweight-transactions-and-batching_1">5. Consistency, Lightweight Transactions, and Batching</h3>
+<p>Cassandra offers tunable consistency and supports lightweight transactions (LWT) for conditional updates. Batching can be used for atomic multi-table writes.</p>
+<p><strong>Key Concepts:</strong>
+- Consistency levels: ONE, QUORUM, ALL, LOCAL_QUORUM, etc.
+- LWT: compare-and-set, uses Paxos protocol
+- Batching: logged (atomic), unlogged (performance)</p>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="k">BEGIN</span><span class="w"> </span><span class="n">LOGGED</span><span class="w"> </span><span class="n">BATCH</span>
+<span class="w">  </span><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">users_by_id</span><span class="w"> </span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span><span class="w"> </span><span class="n">email</span><span class="p">,</span><span class="w"> </span><span class="n">full_name</span><span class="p">)</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="p">(...);</span>
+<span class="w">  </span><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">users_by_email</span><span class="w"> </span><span class="p">(</span><span class="n">email</span><span class="p">,</span><span class="w"> </span><span class="n">user_id</span><span class="p">,</span><span class="w"> </span><span class="n">full_name</span><span class="p">)</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="p">(...);</span>
+<span class="n">APPLY</span><span class="w"> </span><span class="n">BATCH</span><span class="p">;</span>
+</code></pre></div></p>
+<p><strong>Self-Check:</strong>
+- What is a lightweight transaction (LWT)?
+- When should you use batches, and what are the pitfalls?
+- What is the difference between logged and unlogged batches?</p>
+<p><strong>Lab:</strong> 05_consistency_lwt_batch.cql</p>
+<hr />
+<h3 id="6-ttl-tombstones-and-deletes_1">6. TTL, Tombstones, and Deletes</h3>
+<p>Cassandra supports automatic data expiration (TTL) and uses tombstones to mark deletions, which can impact performance if not managed.</p>
+<p><strong>Key Concepts:</strong>
+- TTL: time-to-live for automatic expiration
+- Tombstones: markers for deleted data
+- Compaction: cleans up tombstones</p>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">sessions_by_user</span><span class="w"> </span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span><span class="w"> </span><span class="n">session_id</span><span class="p">)</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="p">(...)</span><span class="w"> </span><span class="k">USING</span><span class="w"> </span><span class="n">TTL</span><span class="w"> </span><span class="mi">3600</span><span class="p">;</span>
+<span class="k">DELETE</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">sessions_by_user</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">user_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="n">session_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">...;</span>
+</code></pre></div></p>
+<p><strong>Self-Check:</strong>
+- What is TTL? How does it work in Cassandra?
+- What are tombstones? Why can they be a problem?
+- How does compaction interact with tombstones?</p>
+<p><strong>Lab:</strong> 06_ttl_tombstones.cql</p>
+<hr />
+<h3 id="7-aggregation-filtering-and-counters_1">7. Aggregation, Filtering, and Counters</h3>
+<p>Cassandra has limited support for aggregation and filtering. Counters are supported but have caveats.</p>
+<p><strong>Key Concepts:</strong>
+- Aggregation: only safe within a partition
+- ALLOW FILTERING: can cause full table scans
+- Counters: distributed, but with limitations</p>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="k">table</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">partition_key</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">...;</span>
+<span class="k">UPDATE</span><span class="w"> </span><span class="n">page_views</span><span class="w"> </span><span class="k">SET</span><span class="w"> </span><span class="k">count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">count</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">url</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">...;</span>
+</code></pre></div></p>
+<p><strong>Self-Check:</strong>
+- Why is aggregation limited in Cassandra?
+- What is the danger of using ALLOW FILTERING?
+- How do counters work, and what are their caveats?</p>
+<p><strong>Lab:</strong> 07_aggregation_filtering.cql</p>
+<hr />
+<h3 id="8-advanced-topics_1">8. Advanced Topics</h3>
+<p>Cassandra supports advanced features for large-scale, secure, and reliable deployments.</p>
+<p><strong>Key Concepts:</strong>
+- Data distribution, hot partitions, anti-patterns
+- Multi-DC replication, network topology
+- Security: authentication, authorization
+- Monitoring and repair</p>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="n">KEYSPACE</span><span class="w"> </span><span class="n">demo_multi_dc</span><span class="w"> </span><span class="k">WITH</span><span class="w"> </span><span class="n">replication</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="err">{</span><span class="s1">&#39;class&#39;</span><span class="p">:</span><span class="s1">&#39;NetworkTopologyStrategy&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;dc1&#39;</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;dc2&#39;</span><span class="p">:</span><span class="mi">2</span><span class="err">}</span><span class="p">;</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">ROLE</span><span class="w"> </span><span class="n">app_user</span><span class="w"> </span><span class="k">WITH</span><span class="w"> </span><span class="n">PASSWORD</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;replace_me&#39;</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="n">LOGIN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">true</span><span class="p">;</span>
+<span class="k">GRANT</span><span class="w"> </span><span class="k">SELECT</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">keyspace_name</span><span class="p">.</span><span class="k">table_name</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="n">app_user</span><span class="p">;</span>
+<span class="c1">-- Use nodetool status, nodetool repair for monitoring and repair</span>
+</code></pre></div></p>
+<p><strong>Self-Check:</strong>
+- What is a hot partition, and how do you avoid it?
+- How does multi-DC replication work?
+- What are some security features in Cassandra?
+- How do you monitor and repair a Cassandra cluster?</p>
+<p><strong>Labs:</strong> 09_multi_dc_replication.cql, 10_security_basics.cql, 11_monitoring_and_repair.cql</p>
+<hr />
+<p>This tutorial covers all major Cassandra concepts from basics to advanced, with explanations, examples, self-check questions, and mapped hands-on labs for each topic.</p>
 
-        <footer class="col-md-12">
-            <hr>
-            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
-        </footer>
-        <script src="../js/bootstrap.bundle.min.js"></script>
-        <script>
-            var base_url = "..",
-                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
-        </script>
-        <script src="../js/base.js"></script>
-        <script src="../search/main.js"></script>
 
-        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="searchModalLabel">Search</h4>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
             </div>
-            <div class="modal-body">
-                <p>From here you can search these documents. Enter your search terms below.</p>
-                <form>
-                    <div class="form-group">
-                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
-                    </div>
-                </form>
-                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
-            </div>
-            <div class="modal-footer">
-            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
         </div>
-    </div>
-</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th style="width: 20%;">Keys</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td class="help shortcut"><kbd>?</kbd></td>
-                    <td>Open this help</td>
-                  </tr>
-                  <tr>
-                    <td class="next shortcut"><kbd>n</kbd></td>
-                    <td>Next page</td>
-                  </tr>
-                  <tr>
-                    <td class="prev shortcut"><kbd>p</kbd></td>
-                    <td>Previous page</td>
-                  </tr>
-                  <tr>
-                    <td class="search shortcut"><kbd>s</kbd></td>
-                    <td>Search</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <div class="modal-footer">
-            </div>
-        </div>
-    </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
 </div>
-
-    </body>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": [], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
 </html>

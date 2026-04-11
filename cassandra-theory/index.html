@@ -21,7 +21,7 @@
     
     
       
-        <title>Cassandra Interview Q&A — Systematic Prep - Cassandra Learning Labs</title>
+        <title>Cassandra Theory Guide (Q&A) - Cassandra Learning Labs</title>
       
     
     
@@ -62,7 +62,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#cassandra-interview-qa-systematic-prep" class="md-skip">
+        <a href="#cassandra-theory-guide-qa" class="md-skip">
           Skip to content
         </a>
       
@@ -98,7 +98,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Cassandra Interview Q&amp;A — Systematic Prep
+              Cassandra Theory Guide (Q&amp;A)
             
           </span>
         </div>
@@ -677,101 +677,69 @@
 
 
 
-<h1 id="cassandra-interview-qa-systematic-prep">Cassandra Interview Q&amp;A — Systematic Prep</h1>
+<h1 id="cassandra-theory-guide-qa">Cassandra Theory Guide (Q&amp;A)</h1>
 <h2 id="1-nosql-and-cassandra-basics">1. NoSQL and Cassandra Basics</h2>
-<ul>
-<li>What is NoSQL? How does Cassandra differ from relational databases?</li>
-<li>What are the main use cases for Cassandra?</li>
-<li>What is the CAP theorem, and where does Cassandra fit?</li>
-</ul>
+<p><strong>Q: What is NoSQL?</strong><br />
+A: NoSQL databases are non-relational, schema-less, and designed for distributed, scalable workloads. They include key-value, document, column-family (like Cassandra), and graph databases.</p>
+<p><strong>Q: How does Cassandra differ from relational databases?</strong><br />
+A: Cassandra is decentralized, uses a flexible schema, and is optimized for high write throughput and horizontal scaling. It does not support joins or multi-row transactions like RDBMS.</p>
+<p><strong>Q: What is the CAP theorem, and where does Cassandra fit?</strong><br />
+A: The CAP theorem states that a distributed system can only guarantee two of Consistency, Availability, and Partition tolerance. Cassandra prioritizes Availability and Partition tolerance (AP), with tunable consistency.</p>
 <h2 id="2-core-cassandra-concepts">2. Core Cassandra Concepts</h2>
-<ul>
-<li>What is a cluster, node, and data center in Cassandra?</li>
-<li>What is a partition key, and why is it critical?</li>
-<li>It defines data placement and parallelism; choose it to evenly distribute load and bound partitions. Example:
-    <div class="highlight"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">orders_by_user</span><span class="w"> </span><span class="p">(</span>
-<span class="w">  </span><span class="n">user_id</span><span class="w"> </span><span class="n">UUID</span><span class="p">,</span>
-<span class="w">  </span><span class="n">order_id</span><span class="w"> </span><span class="n">TIMEUUID</span><span class="p">,</span>
-<span class="w">  </span><span class="n">amount</span><span class="w"> </span><span class="nb">decimal</span><span class="p">,</span>
-<span class="w">  </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span><span class="w"> </span><span class="n">order_id</span><span class="p">)</span>
-<span class="p">);</span>
-<span class="c1">-- user_id is the partition key: all of a user&#39;s orders colocate; order_id clusters for ordering.</span>
-</code></pre></div></li>
-<li>How do clustering columns affect on-disk ordering and query patterns?</li>
-<li>They sort rows within a partition and enable range queries. Order matters for filtering and paging.
-    <div class="highlight"><pre><span></span><code><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span><span class="w"> </span><span class="n">order_ts</span><span class="w"> </span><span class="k">DESC</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">)</span>
-<span class="c1">-- Enables queries like: SELECT * FROM ... WHERE user_id=? AND order_ts &gt;= ? LIMIT 20;</span>
-</code></pre></div></li>
-<li>How does replication factor impact availability and reads/writes?</li>
-<li>RF defines copies per DC. With RF=3 and CL=QUORUM, you can lose one node and still read/write. Higher RF improves availability at storage cost.</li>
-<li>What is tunable consistency? How do consistency levels work?</li>
-<li>What are common causes of hot partitions?</li>
-<li>Skewed partition keys (e.g., country=US, date only), monotonically increasing keys, or small RF with high traffic.</li>
-</ul>
+<p><strong>Q: What is a cluster, node, and data center in Cassandra?</strong><br />
+A: A cluster is a group of nodes (servers) that store data. Nodes are grouped into data centers for replication and fault tolerance.</p>
+<p><strong>Q: What is a partition key, and why is it critical?</strong><br />
+A: The partition key determines how data is distributed across nodes. Good partition key choice ensures even data distribution and avoids hot spots.</p>
+<p><strong>Q: What are clustering columns?</strong><br />
+A: Clustering columns define the order of rows within a partition, enabling efficient range queries and sorting.</p>
+<p><strong>Q: What is replication factor?</strong><br />
+A: Replication factor (RF) is the number of copies of data stored in the cluster, per data center.</p>
+<p><strong>Q: What are consistency levels?</strong><br />
+A: Consistency levels (e.g., ONE, QUORUM, ALL) control how many replicas must acknowledge a read or write for it to succeed.</p>
+<p><strong>Q: What causes hot partitions?</strong><br />
+A: Poor partition key choice (e.g., low cardinality, monotonically increasing values) can cause some nodes to receive disproportionate traffic.</p>
 <h2 id="3-data-modeling-and-querying">3. Data Modeling and Querying</h2>
-<ul>
-<li>Why is data modeled by query in Cassandra?</li>
-<li>No joins; tables are shaped per access pattern to keep reads single-partition and predictable latency.</li>
-<li>When would you denormalize and duplicate data?</li>
-<li>To serve multiple queries without ALLOW FILTERING or secondary indexes; storage is cheap, latency is not. Example (user lookup by email):
-    <div class="highlight"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">users_by_id</span><span class="w"> </span><span class="p">(</span>
-<span class="w">  </span><span class="n">user_id</span><span class="w"> </span><span class="n">UUID</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span>
-<span class="w">  </span><span class="n">email</span><span class="w"> </span><span class="nb">text</span><span class="p">,</span>
-<span class="w">  </span><span class="n">full_name</span><span class="w"> </span><span class="nb">text</span>
-<span class="p">);</span>
-<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">users_by_email</span><span class="w"> </span><span class="p">(</span>
-<span class="w">  </span><span class="n">email</span><span class="w"> </span><span class="nb">text</span><span class="p">,</span>
-<span class="w">  </span><span class="n">user_id</span><span class="w"> </span><span class="n">UUID</span><span class="p">,</span>
-<span class="w">  </span><span class="n">full_name</span><span class="w"> </span><span class="nb">text</span><span class="p">,</span>
-<span class="w">  </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="p">(</span><span class="n">email</span><span class="p">,</span><span class="w"> </span><span class="n">user_id</span><span class="p">)</span>
-<span class="p">);</span>
-</code></pre></div></li>
-<li>How do you design tables for time-series data?</li>
-<li>Use a compound key with a bounded time bucket to prevent wide partitions.
-    <div class="highlight"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">readings_by_device</span><span class="w"> </span><span class="p">(</span>
-<span class="w">  </span><span class="n">device_id</span><span class="w"> </span><span class="n">UUID</span><span class="p">,</span>
-<span class="w">  </span><span class="k">day</span><span class="w"> </span><span class="nb">date</span><span class="p">,</span>
-<span class="w">  </span><span class="n">ts</span><span class="w"> </span><span class="n">TIMEUUID</span><span class="p">,</span>
-<span class="w">  </span><span class="n">reading</span><span class="w"> </span><span class="n">double</span><span class="p">,</span>
-<span class="w">  </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="p">((</span><span class="n">device_id</span><span class="p">,</span><span class="w"> </span><span class="k">day</span><span class="p">),</span><span class="w"> </span><span class="n">ts</span><span class="p">)</span>
-<span class="p">)</span><span class="w"> </span><span class="k">WITH</span><span class="w"> </span><span class="n">CLUSTERING</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="p">(</span><span class="n">ts</span><span class="w"> </span><span class="k">DESC</span><span class="p">);</span>
-</code></pre></div></li>
-<li>What is the anti-pattern of using ALLOW FILTERING?</li>
-<li>How do you handle one-to-many and many-to-many relationships?</li>
-</ul>
+<p><strong>Q: Why is data modeled by query in Cassandra?</strong><br />
+A: Cassandra tables are designed for specific queries to ensure fast, predictable reads. There are no joins; denormalization is common.</p>
+<p><strong>Q: When do you denormalize and duplicate data?</strong><br />
+A: When you need to support multiple access patterns efficiently, you create separate tables for each query, duplicating data as needed.</p>
+<p><strong>Q: How do you design tables for time-series data?</strong><br />
+A: Use a compound primary key with a time bucket (e.g., day, month) as part of the partition key to avoid unbounded partitions.</p>
+<p><strong>Q: What is the anti-pattern of using ALLOW FILTERING?</strong><br />
+A: ALLOW FILTERING enables queries not supported by the table’s primary key, but can cause full table scans and poor performance.</p>
+<p><strong>Q: How do you handle one-to-many and many-to-many relationships?</strong><br />
+A: Use wide rows (clustering columns) for one-to-many, and create join tables for many-to-many, each designed for a specific query.</p>
 <h2 id="4-indexes-and-materialized-views">4. Indexes and Materialized Views</h2>
-<ul>
-<li>When should you use a secondary index? When should you avoid it?</li>
-<li>What are materialized views? What are their pros and cons?</li>
-<li>How do you keep denormalized tables in sync?</li>
-</ul>
+<p><strong>Q: When should you use a secondary index?</strong><br />
+A: Use only for low-cardinality columns and small partitions. Avoid for high-cardinality or large tables.</p>
+<p><strong>Q: What are materialized views?</strong><br />
+A: Materialized views automatically maintain a denormalized copy of data for a different query pattern. They can lag or become inconsistent, so explicit dual-writes are often preferred.</p>
 <h2 id="5-consistency-lwt-and-batching">5. Consistency, LWT, and Batching</h2>
-<ul>
-<li>What is a lightweight transaction (LWT)?</li>
-<li>When should you use batches, and what are the pitfalls?</li>
-<li>What is the difference between logged and unlogged batches?</li>
-</ul>
+<p><strong>Q: What is a lightweight transaction (LWT)?</strong><br />
+A: LWTs use the Paxos protocol to provide linearizable consistency for conditional updates (e.g., IF NOT EXISTS). They are slower than normal writes.</p>
+<p><strong>Q: When should you use batches?</strong><br />
+A: Use logged batches for atomic multi-table writes. Avoid large batches; they can cause performance issues.</p>
 <h2 id="6-ttl-tombstones-and-deletes">6. TTL, Tombstones, and Deletes</h2>
-<ul>
-<li>What is TTL? How does it work in Cassandra?</li>
-<li>What are tombstones? Why can they be a problem?</li>
-<li>How does compaction interact with tombstones?</li>
-</ul>
+<p><strong>Q: What is TTL?</strong><br />
+A: TTL (time-to-live) automatically expires data after a set period.</p>
+<p><strong>Q: What are tombstones?</strong><br />
+A: Tombstones are markers for deleted or expired data. Excessive tombstones can degrade read and compaction performance.</p>
 <h2 id="7-aggregation-filtering-and-counters">7. Aggregation, Filtering, and Counters</h2>
-<ul>
-<li>Why is aggregation limited in Cassandra?</li>
-<li>What is the danger of using ALLOW FILTERING?</li>
-<li>How do counters work, and what are their caveats?</li>
-</ul>
+<p><strong>Q: Why is aggregation limited in Cassandra?</strong><br />
+A: Aggregation (e.g., COUNT(*)) is only efficient within a partition. Cluster-wide aggregation requires a full scan.</p>
+<p><strong>Q: What is the danger of using ALLOW FILTERING?</strong><br />
+A: It can trigger full table scans, leading to unpredictable performance.</p>
+<p><strong>Q: How do counters work, and what are their caveats?</strong><br />
+A: Counters are distributed and eventually consistent. They can be inaccurate if used with batches or under heavy contention.</p>
 <h2 id="8-advanced-topics">8. Advanced Topics</h2>
-<ul>
-<li>What is a hot partition, and how do you avoid it?</li>
-<li>How does multi-DC replication work?</li>
-<li>What are some security features in Cassandra?</li>
-<li>How do you monitor and repair a Cassandra cluster?</li>
-</ul>
-<hr />
-<p>Questions are mapped to the learning topics in labs-guide.md. For hands-on practice, see the corresponding lab for each topic.</p>
+<p><strong>Q: What is a hot partition, and how do you avoid it?</strong><br />
+A: A hot partition receives disproportionate traffic. Avoid by choosing high-cardinality, well-distributed partition keys.</p>
+<p><strong>Q: How does multi-DC replication work?</strong><br />
+A: Data is replicated to multiple data centers using NetworkTopologyStrategy, with separate RF per DC.</p>
+<p><strong>Q: What are some security features in Cassandra?</strong><br />
+A: Authentication, authorization (roles/permissions), and optional encryption (SSL/TLS).</p>
+<p><strong>Q: How do you monitor and repair a Cassandra cluster?</strong><br />
+A: Use nodetool (status, repair, cleanup), logs, and monitoring tools (e.g., Prometheus, Grafana).</p>
 
 
 

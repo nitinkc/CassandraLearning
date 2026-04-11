@@ -11,23 +11,25 @@
       
       
       
+        <link rel="prev" href="../..">
       
-        <link rel="next" href="theory/01-nosql-and-cassandra/">
+      
+        <link rel="next" href="../02-core-concepts/">
       
       
         
       
       
-      <link rel="icon" href="assets/images/favicon.png">
+      <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
-        <title>Cassandra Learning Labs</title>
+        <title>NoSQL & Cassandra - Cassandra Learning Labs</title>
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
       
       
 
@@ -46,7 +48,7 @@
       
     
     
-    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -64,7 +66,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#cassandra-learning-labs-documentation" class="md-skip">
+        <a href="#nosql-cassandra" class="md-skip">
           Skip to content
         </a>
       
@@ -80,7 +82,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="." title="Cassandra Learning Labs" class="md-header__button md-logo" aria-label="Cassandra Learning Labs" data-md-component="logo">
+    <a href="../.." title="Cassandra Learning Labs" class="md-header__button md-logo" aria-label="Cassandra Learning Labs" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -100,7 +102,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Home
+              NoSQL & Cassandra
             
           </span>
         </div>
@@ -178,7 +180,7 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="." title="Cassandra Learning Labs" class="md-nav__button md-logo" aria-label="Cassandra Learning Labs" data-md-component="logo">
+    <a href="../.." title="Cassandra Learning Labs" class="md-nav__button md-logo" aria-label="Cassandra Learning Labs" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -193,19 +195,10 @@
       
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-      <a href="." class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
         
   
   
@@ -221,7 +214,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -230,18 +222,20 @@
       
   
   
+    
   
   
+  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
         
           
           <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
@@ -262,7 +256,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -277,10 +271,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="theory/01-nosql-and-cassandra/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NoSQL & Cassandra
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -296,6 +317,59 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#key-points" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Points
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-diagram" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example Diagram
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -308,7 +382,7 @@
   
   
     <li class="md-nav__item">
-      <a href="theory/02-core-concepts/" class="md-nav__link">
+      <a href="../02-core-concepts/" class="md-nav__link">
         
   
   
@@ -336,7 +410,7 @@
   
   
     <li class="md-nav__item">
-      <a href="theory/03-data-modeling/" class="md-nav__link">
+      <a href="../03-data-modeling/" class="md-nav__link">
         
   
   
@@ -364,7 +438,7 @@
   
   
     <li class="md-nav__item">
-      <a href="theory/04-indexes-and-mv/" class="md-nav__link">
+      <a href="../04-indexes-and-mv/" class="md-nav__link">
         
   
   
@@ -392,7 +466,7 @@
   
   
     <li class="md-nav__item">
-      <a href="theory/05-consistency-lwt-batch/" class="md-nav__link">
+      <a href="../05-consistency-lwt-batch/" class="md-nav__link">
         
   
   
@@ -420,7 +494,7 @@
   
   
     <li class="md-nav__item">
-      <a href="theory/06-ttl-tombstones/" class="md-nav__link">
+      <a href="../06-ttl-tombstones/" class="md-nav__link">
         
   
   
@@ -448,7 +522,7 @@
   
   
     <li class="md-nav__item">
-      <a href="theory/07-aggregation-counters/" class="md-nav__link">
+      <a href="../07-aggregation-counters/" class="md-nav__link">
         
   
   
@@ -476,7 +550,7 @@
   
   
     <li class="md-nav__item">
-      <a href="theory/08-advanced/" class="md-nav__link">
+      <a href="../08-advanced/" class="md-nav__link">
         
   
   
@@ -511,7 +585,7 @@
   
   
     <li class="md-nav__item">
-      <a href="labs-overview/" class="md-nav__link">
+      <a href="../../labs-overview/" class="md-nav__link">
         
   
   
@@ -538,7 +612,7 @@
   
   
     <li class="md-nav__item">
-      <a href="interview-prep/" class="md-nav__link">
+      <a href="../../interview-prep/" class="md-nav__link">
         
   
   
@@ -578,6 +652,47 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#key-points" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Points
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-diagram" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example Diagram
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -593,12 +708,22 @@
 
 
 
-<h1 id="cassandra-learning-labs-documentation">Cassandra Learning Labs Documentation</h1>
-<p>This site collects the full documentation for the Cassandra CQL labs and the Spring Boot app.</p>
+<h1 id="nosql-cassandra">NoSQL &amp; Cassandra</h1>
+<p>Cassandra is a distributed NoSQL database designed for high availability and scalability.</p>
+<h2 id="key-points">Key Points</h2>
 <ul>
-<li>Labs guide: see <code>labs-guide.md</code> for the guided learning path and detailed lab notes.</li>
-<li>Interview prep: see <code>interview-questions.md</code> for Q&amp;A.</li>
+<li><strong>NoSQL</strong>: Non-relational, schema-less, designed for distributed, scalable workloads.</li>
+<li><strong>Cassandra</strong>: Column-family NoSQL, decentralized, flexible schema, optimized for high write throughput.</li>
+<li><strong>CAP Theorem</strong>: Cassandra prioritizes Availability and Partition tolerance (AP), with tunable consistency.</li>
 </ul>
+<h2 id="example-diagram">Example Diagram</h2>
+<div class="highlight"><pre><span></span><code>graph TD;
+  Consistency --&gt;|Not always| Cassandra
+  Availability --&gt;|Yes| Cassandra
+  PartitionTolerance --&gt;|Yes| Cassandra
+</code></pre></div>
+<h2 id="summary">Summary</h2>
+<p>Cassandra is best for workloads needing high availability, scalability, and fast writes. It is not a drop-in replacement for relational databases.</p>
 
 
 
@@ -648,10 +773,10 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": ".", "features": [], "search": "assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
     
   </body>

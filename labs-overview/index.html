@@ -11,6 +11,10 @@
       
       
       
+        <link rel="prev" href="../theory/08-advanced/">
+      
+      
+        <link rel="next" href="../interview-prep/">
       
       
         
@@ -21,7 +25,7 @@
     
     
       
-        <title>Cassandra Interview Q&A — Systematic Prep - Cassandra Learning Labs</title>
+        <title>Labs Overview - Cassandra Learning Labs</title>
       
     
     
@@ -62,7 +66,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#cassandra-interview-qa-systematic-prep" class="md-skip">
+        <a href="#cassandra-labs-overview" class="md-skip">
           Skip to content
         </a>
       
@@ -98,7 +102,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Cassandra Interview Q&amp;A — Systematic Prep
+              Labs Overview
             
           </span>
         </div>
@@ -496,10 +500,19 @@
       
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../labs-overview/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -515,6 +528,7 @@
   
 
       </a>
+      
     </li>
   
 
@@ -566,102 +580,6 @@
     
   
   
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#1-nosql-and-cassandra-basics" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        1. NoSQL and Cassandra Basics
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#2-core-cassandra-concepts" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        2. Core Cassandra Concepts
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#3-data-modeling-and-querying" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3. Data Modeling and Querying
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#4-indexes-and-materialized-views" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        4. Indexes and Materialized Views
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#5-consistency-lwt-and-batching" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        5. Consistency, LWT, and Batching
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#6-ttl-tombstones-and-deletes" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        6. TTL, Tombstones, and Deletes
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#7-aggregation-filtering-and-counters" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        7. Aggregation, Filtering, and Counters
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#8-advanced-topics" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        8. Advanced Topics
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
 </nav>
                   </div>
                 </div>
@@ -677,101 +595,75 @@
 
 
 
-<h1 id="cassandra-interview-qa-systematic-prep">Cassandra Interview Q&amp;A — Systematic Prep</h1>
-<h2 id="1-nosql-and-cassandra-basics">1. NoSQL and Cassandra Basics</h2>
-<ul>
-<li>What is NoSQL? How does Cassandra differ from relational databases?</li>
-<li>What are the main use cases for Cassandra?</li>
-<li>What is the CAP theorem, and where does Cassandra fit?</li>
-</ul>
-<h2 id="2-core-cassandra-concepts">2. Core Cassandra Concepts</h2>
-<ul>
-<li>What is a cluster, node, and data center in Cassandra?</li>
-<li>What is a partition key, and why is it critical?</li>
-<li>It defines data placement and parallelism; choose it to evenly distribute load and bound partitions. Example:
-    <div class="highlight"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">orders_by_user</span><span class="w"> </span><span class="p">(</span>
-<span class="w">  </span><span class="n">user_id</span><span class="w"> </span><span class="n">UUID</span><span class="p">,</span>
-<span class="w">  </span><span class="n">order_id</span><span class="w"> </span><span class="n">TIMEUUID</span><span class="p">,</span>
-<span class="w">  </span><span class="n">amount</span><span class="w"> </span><span class="nb">decimal</span><span class="p">,</span>
-<span class="w">  </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span><span class="w"> </span><span class="n">order_id</span><span class="p">)</span>
-<span class="p">);</span>
-<span class="c1">-- user_id is the partition key: all of a user&#39;s orders colocate; order_id clusters for ordering.</span>
-</code></pre></div></li>
-<li>How do clustering columns affect on-disk ordering and query patterns?</li>
-<li>They sort rows within a partition and enable range queries. Order matters for filtering and paging.
-    <div class="highlight"><pre><span></span><code><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span><span class="w"> </span><span class="n">order_ts</span><span class="w"> </span><span class="k">DESC</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">)</span>
-<span class="c1">-- Enables queries like: SELECT * FROM ... WHERE user_id=? AND order_ts &gt;= ? LIMIT 20;</span>
-</code></pre></div></li>
-<li>How does replication factor impact availability and reads/writes?</li>
-<li>RF defines copies per DC. With RF=3 and CL=QUORUM, you can lose one node and still read/write. Higher RF improves availability at storage cost.</li>
-<li>What is tunable consistency? How do consistency levels work?</li>
-<li>What are common causes of hot partitions?</li>
-<li>Skewed partition keys (e.g., country=US, date only), monotonically increasing keys, or small RF with high traffic.</li>
-</ul>
-<h2 id="3-data-modeling-and-querying">3. Data Modeling and Querying</h2>
-<ul>
-<li>Why is data modeled by query in Cassandra?</li>
-<li>No joins; tables are shaped per access pattern to keep reads single-partition and predictable latency.</li>
-<li>When would you denormalize and duplicate data?</li>
-<li>To serve multiple queries without ALLOW FILTERING or secondary indexes; storage is cheap, latency is not. Example (user lookup by email):
-    <div class="highlight"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">users_by_id</span><span class="w"> </span><span class="p">(</span>
-<span class="w">  </span><span class="n">user_id</span><span class="w"> </span><span class="n">UUID</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span>
-<span class="w">  </span><span class="n">email</span><span class="w"> </span><span class="nb">text</span><span class="p">,</span>
-<span class="w">  </span><span class="n">full_name</span><span class="w"> </span><span class="nb">text</span>
-<span class="p">);</span>
-<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">users_by_email</span><span class="w"> </span><span class="p">(</span>
-<span class="w">  </span><span class="n">email</span><span class="w"> </span><span class="nb">text</span><span class="p">,</span>
-<span class="w">  </span><span class="n">user_id</span><span class="w"> </span><span class="n">UUID</span><span class="p">,</span>
-<span class="w">  </span><span class="n">full_name</span><span class="w"> </span><span class="nb">text</span><span class="p">,</span>
-<span class="w">  </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="p">(</span><span class="n">email</span><span class="p">,</span><span class="w"> </span><span class="n">user_id</span><span class="p">)</span>
-<span class="p">);</span>
-</code></pre></div></li>
-<li>How do you design tables for time-series data?</li>
-<li>Use a compound key with a bounded time bucket to prevent wide partitions.
-    <div class="highlight"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">readings_by_device</span><span class="w"> </span><span class="p">(</span>
-<span class="w">  </span><span class="n">device_id</span><span class="w"> </span><span class="n">UUID</span><span class="p">,</span>
-<span class="w">  </span><span class="k">day</span><span class="w"> </span><span class="nb">date</span><span class="p">,</span>
-<span class="w">  </span><span class="n">ts</span><span class="w"> </span><span class="n">TIMEUUID</span><span class="p">,</span>
-<span class="w">  </span><span class="n">reading</span><span class="w"> </span><span class="n">double</span><span class="p">,</span>
-<span class="w">  </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="p">((</span><span class="n">device_id</span><span class="p">,</span><span class="w"> </span><span class="k">day</span><span class="p">),</span><span class="w"> </span><span class="n">ts</span><span class="p">)</span>
-<span class="p">)</span><span class="w"> </span><span class="k">WITH</span><span class="w"> </span><span class="n">CLUSTERING</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="p">(</span><span class="n">ts</span><span class="w"> </span><span class="k">DESC</span><span class="p">);</span>
-</code></pre></div></li>
-<li>What is the anti-pattern of using ALLOW FILTERING?</li>
-<li>How do you handle one-to-many and many-to-many relationships?</li>
-</ul>
-<h2 id="4-indexes-and-materialized-views">4. Indexes and Materialized Views</h2>
-<ul>
-<li>When should you use a secondary index? When should you avoid it?</li>
-<li>What are materialized views? What are their pros and cons?</li>
-<li>How do you keep denormalized tables in sync?</li>
-</ul>
-<h2 id="5-consistency-lwt-and-batching">5. Consistency, LWT, and Batching</h2>
-<ul>
-<li>What is a lightweight transaction (LWT)?</li>
-<li>When should you use batches, and what are the pitfalls?</li>
-<li>What is the difference between logged and unlogged batches?</li>
-</ul>
-<h2 id="6-ttl-tombstones-and-deletes">6. TTL, Tombstones, and Deletes</h2>
-<ul>
-<li>What is TTL? How does it work in Cassandra?</li>
-<li>What are tombstones? Why can they be a problem?</li>
-<li>How does compaction interact with tombstones?</li>
-</ul>
-<h2 id="7-aggregation-filtering-and-counters">7. Aggregation, Filtering, and Counters</h2>
-<ul>
-<li>Why is aggregation limited in Cassandra?</li>
-<li>What is the danger of using ALLOW FILTERING?</li>
-<li>How do counters work, and what are their caveats?</li>
-</ul>
-<h2 id="8-advanced-topics">8. Advanced Topics</h2>
-<ul>
-<li>What is a hot partition, and how do you avoid it?</li>
-<li>How does multi-DC replication work?</li>
-<li>What are some security features in Cassandra?</li>
-<li>How do you monitor and repair a Cassandra cluster?</li>
-</ul>
-<hr />
-<p>Questions are mapped to the learning topics in labs-guide.md. For hands-on practice, see the corresponding lab for each topic.</p>
+<h1 id="cassandra-labs-overview">Cassandra Labs Overview</h1>
+<p>This page summarizes each hands-on lab, what it demonstrates, and which theory topic(s) it reinforces.</p>
+<table>
+<thead>
+<tr>
+<th>Lab</th>
+<th>Description</th>
+<th>Reinforces Theory</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>01_keyspace_basics.cql</td>
+<td>Keyspace creation, SimpleStrategy, basic table</td>
+<td><a href="../theory/01-nosql-and-cassandra/">NoSQL &amp; Cassandra Basics</a>, <a href="../theory/02-core-concepts/">Core Concepts</a></td>
+</tr>
+<tr>
+<td>02_partitioning_clustering.cql</td>
+<td>Partition keys, clustering columns, bounding partitions</td>
+<td><a href="../theory/02-core-concepts/">Core Concepts</a>, <a href="../theory/03-data-modeling/">Data Modeling</a></td>
+</tr>
+<tr>
+<td>03_modeling_by_query.cql</td>
+<td>Query-driven modeling, denormalization, lookup tables</td>
+<td><a href="../theory/03-data-modeling/">Data Modeling</a></td>
+</tr>
+<tr>
+<td>04_indexes_and_mv.cql</td>
+<td>Secondary indexes, materialized views, trade-offs</td>
+<td><a href="../theory/04-indexes-and-mv/">Indexes &amp; MVs</a></td>
+</tr>
+<tr>
+<td>05_consistency_lwt_batch.cql</td>
+<td>Consistency levels, lightweight transactions, batches</td>
+<td><a href="../theory/05-consistency-lwt-batch/">Consistency, LWT, Batching</a></td>
+</tr>
+<tr>
+<td>06_ttl_tombstones.cql</td>
+<td>TTL, tombstones, deletes, compaction</td>
+<td><a href="../theory/06-ttl-tombstones/">TTL &amp; Tombstones</a></td>
+</tr>
+<tr>
+<td>07_aggregation_filtering.cql</td>
+<td>Aggregation, ALLOW FILTERING, counters</td>
+<td><a href="../theory/07-aggregation-counters/">Aggregation &amp; Counters</a></td>
+</tr>
+<tr>
+<td>08_relational_to_query_first.cql</td>
+<td>Converting relational models to query-first Cassandra models</td>
+<td><a href="../theory/03-data-modeling/">Data Modeling</a></td>
+</tr>
+<tr>
+<td>09_multi_dc_replication.cql</td>
+<td>NetworkTopologyStrategy, multi-DC setup</td>
+<td><a href="../theory/08-advanced/">Advanced Topics</a></td>
+</tr>
+<tr>
+<td>10_security_basics.cql</td>
+<td>Authentication, roles, permissions</td>
+<td><a href="../theory/08-advanced/">Advanced Topics</a></td>
+</tr>
+<tr>
+<td>11_monitoring_and_repair.cql</td>
+<td>nodetool, cluster health, repairs</td>
+<td><a href="../theory/08-advanced/">Advanced Topics</a></td>
+</tr>
+</tbody>
+</table>
+<p>For details and hands-on steps, see each lab file in the <code>labs/</code> directory.</p>
 
 
 
