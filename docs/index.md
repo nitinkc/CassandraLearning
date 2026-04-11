@@ -3,7 +3,7 @@
 This site collects the full documentation for the Cassandra CQL labs and the Spring Boot app.
 
 ## 📌 GitHub Repository
-**[CassandraSpringBootLearning](https://github.com/sgovinda/CassandraSpringBootLearning)** - Full source code, Docker setup, labs, and Spring Boot application.
+**[CassandraSpringBootLearning](https://github.com/nitinkc/CassandraSpringBootLearning)** - Full source code, Docker setup, labs, and Spring Boot application.
 
 ## 📚 Getting Started
 
