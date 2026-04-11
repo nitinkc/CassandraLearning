@@ -72,3 +72,4 @@ Publish to GitHub Pages (quick):
 # make sure your repo is committed and has a remote (origin)
 mkdocs gh-deploy --force
 ```
+
