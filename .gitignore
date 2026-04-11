@@ -38,3 +38,6 @@ docker/**/data
 
 # Env
 .env
+
+.venv/
+site/
