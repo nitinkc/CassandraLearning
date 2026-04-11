@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../img/favicon.ico">
+        <title>Interview Questions - Cassandra Learning Labs</title>
+        <link href="../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../css/fontawesome.min.css" rel="stylesheet">
+        <link href="../css/brands.min.css" rel="stylesheet">
+        <link href="../css/solid.min.css" rel="stylesheet">
+        <link href="../css/v4-font-face.min.css" rel="stylesheet">
+        <link href="../css/base.css" rel="stylesheet">
+        <link id="hljs-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atelier-forest-light.min.css" >
+        <link id="hljs-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css" disabled>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="..">Cassandra Learning Labs</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="nav-item">
+                                <a href=".." class="nav-link">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../labs-guide/" class="nav-link">Labs Guide</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="./" class="nav-link active" aria-current="page">Interview Questions</a>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ms-md-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="../labs-guide/" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" class="nav-link disabled">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-bs-toggle="collapse" data-bs-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-bs-level="1"><a href="#cassandra-interview-qa-most-important-first" class="nav-link">Cassandra Interview Q&amp;A (Most Important First)</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-bs-level="2"><a href="#core-concepts" class="nav-link">Core Concepts</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#data-modeling-and-querying" class="nav-link">Data Modeling and Querying</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#consistency-and-transactions" class="nav-link">Consistency and Transactions</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#performance-and-operations" class="nav-link">Performance and Operations</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#advanced-topics" class="nav-link">Advanced Topics</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="cassandra-interview-qa-most-important-first">Cassandra Interview Q&amp;A (Most Important First)</h1>
+<h2 id="core-concepts">Core Concepts</h2>
+<ul>
+<li>What is a partition key, and why is it critical?</li>
+<li>It defines data placement and parallelism; choose it to evenly distribute load and bound partitions. Example:
+    <div class="highlight"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">orders_by_user</span><span class="w"> </span><span class="p">(</span>
+<span class="w">  </span><span class="n">user_id</span><span class="w"> </span><span class="n">UUID</span><span class="p">,</span>
+<span class="w">  </span><span class="n">order_id</span><span class="w"> </span><span class="n">TIMEUUID</span><span class="p">,</span>
+<span class="w">  </span><span class="n">amount</span><span class="w"> </span><span class="nb">decimal</span><span class="p">,</span>
+<span class="w">  </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span><span class="w"> </span><span class="n">order_id</span><span class="p">)</span>
+<span class="p">);</span>
+<span class="c1">-- user_id is the partition key: all of a user&#39;s orders colocate; order_id clusters for ordering.</span>
+</code></pre></div></li>
+<li>How do clustering columns affect on-disk ordering and query patterns?</li>
+<li>They sort rows within a partition and enable range queries. Order matters for filtering and paging.
+    <div class="highlight"><pre><span></span><code><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span><span class="w"> </span><span class="n">order_ts</span><span class="w"> </span><span class="k">DESC</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">)</span>
+<span class="c1">-- Enables queries like: SELECT * FROM ... WHERE user_id=? AND order_ts &gt;= ? LIMIT 20;</span>
+</code></pre></div></li>
+<li>Why is data modeled by query in Cassandra?</li>
+<li>No joins; tables are shaped per access pattern to keep reads single-partition and predictable latency.</li>
+<li>What are common causes of hot partitions?</li>
+<li>Skewed partition keys (e.g., country=US, date only), monotonically increasing keys, or small RF with high traffic.</li>
+<li>How does replication factor impact availability and reads/writes?</li>
+<li>RF defines copies per DC. With RF=3 and CL=QUORUM, you can lose one node and still read/write. Higher RF improves availability at storage cost.</li>
+</ul>
+<h2 id="data-modeling-and-querying">Data Modeling and Querying</h2>
+<ul>
+<li>When would you denormalize and duplicate data?</li>
+<li>To serve multiple queries without ALLOW FILTERING or secondary indexes; storage is cheap, latency is not. Example (user lookup by email):
+    <div class="highlight"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">users_by_id</span><span class="w"> </span><span class="p">(</span>
+<span class="w">  </span><span class="n">user_id</span><span class="w"> </span><span class="n">UUID</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span>
+<span class="w">  </span><span class="n">email</span><span class="w"> </span><span class="nb">text</span><span class="p">,</span>
+<span class="w">  </span><span class="n">full_name</span><span class="w"> </span><span class="nb">text</span>
+<span class="p">);</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">users_by_email</span><span class="w"> </span><span class="p">(</span>
+<span class="w">  </span><span class="n">email</span><span class="w"> </span><span class="nb">text</span><span class="p">,</span>
+<span class="w">  </span><span class="n">user_id</span><span class="w"> </span><span class="n">UUID</span><span class="p">,</span>
+<span class="w">  </span><span class="n">full_name</span><span class="w"> </span><span class="nb">text</span><span class="p">,</span>
+<span class="w">  </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="p">(</span><span class="n">email</span><span class="p">,</span><span class="w"> </span><span class="n">user_id</span><span class="p">)</span>
+<span class="p">);</span>
+</code></pre></div></li>
+<li>How do you design tables for time-series data?</li>
+<li>Use a compound key with a bounded time bucket to prevent wide partitions.
+    <div class="highlight"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">readings_by_device</span><span class="w"> </span><span class="p">(</span>
+<span class="w">  </span><span class="n">device_id</span><span class="w"> </span><span class="n">UUID</span><span class="p">,</span>
+<span class="w">  </span><span class="k">day</span><span class="w"> </span><span class="nb">date</span><span class="p">,</span>
+<span class="w">  </span><span class="n">ts</span><span class="w"> </span><span class="n">TIMEUUID</span><span class="p">,</span>
+<span class="w">  </span><span class="n">reading</span><span class="w"> </span><span class="n">double</span><span class="p">,</span>
+<span class="w">  </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="p">((</span><span class="n">device_id</span><span class="p">,</span><span class="w"> </span><span class="k">day</span><span class="p">),</span><span class="w"> </span><span class="n">ts</span><span class="p">)</span>
+<span class="p">)</span><span class="w"> </span><span class="k">WITH</span><span class="w"> </span><span class="n">CLUSTERING</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="p">(</span><span class="n">ts</span><span class="w"> </span><span class="k">DESC</span><span class="p">);</span>
+</code></pre></div></li>
+<li>What are anti-patterns for secondary indexes?</li>
+<li>High-cardinality partitions, filtering most rows, using as a replacement for proper primary keys, or indexing columns rarely queried.</li>
+<li>What are materialized views and when are they risky?</li>
+<li>Server-managed denormalization; risk of divergence and repair overhead. Prefer manual dual writes unless the view is small and strictly needed.</li>
+<li>Why is <code>ALLOW FILTERING</code> discouraged?</li>
+<li>It scans partitions or the whole table, causing unpredictable latency and load; it is a last-resort debugging tool.</li>
+</ul>
+<h2 id="consistency-and-transactions">Consistency and Transactions</h2>
+<ul>
+<li>Explain consistency levels and the R + W &gt; RF rule.</li>
+<li>If read CL plus write CL exceed RF, a quorum of replicas overlap, giving strong consistency. Example RF=3: QUORUM+QUORUM =&gt; 2+2&gt;3.</li>
+<li>What are lightweight transactions (LWT) and when do you use them?</li>
+<li>Compare-and-set across replicas using Paxos; use for uniqueness or infrequent conditional updates.
+    <div class="highlight"><pre><span></span><code><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">users_by_email</span><span class="w"> </span><span class="p">(</span><span class="n">email</span><span class="p">,</span><span class="w"> </span><span class="n">user_id</span><span class="p">,</span><span class="w"> </span><span class="n">full_name</span><span class="p">)</span>
+<span class="k">VALUES</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;alex@example.com&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="n">e111d10</span><span class="o">-</span><span class="mi">1111</span><span class="o">-</span><span class="mi">1111</span><span class="o">-</span><span class="mi">1111</span><span class="o">-</span><span class="mi">111111111111</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Alex&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">IF</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">EXISTS</span><span class="p">;</span>
+</code></pre></div></li>
+<li>What is the difference between logged and unlogged batches?</li>
+<li>Logged batches write a batch log for atomicity across partitions (extra I/O). Unlogged batches are just a network grouping for same-partition mutations.</li>
+</ul>
+<h2 id="performance-and-operations">Performance and Operations</h2>
+<ul>
+<li>What are tombstones and how do they impact reads?</li>
+<li>Markers for deletes/TTL; many tombstones cause heavy reads and timeouts until purged by compaction.</li>
+<li>How does TTL affect storage and compaction?</li>
+<li>Expired cells become tombstones; large TTL churn can bloat SSTables until compaction clears them.</li>
+<li>How do you troubleshoot slow queries?</li>
+<li>Check coordinator tracing, profile partition size, ensure single-partition access, verify correct CL, and inspect tombstone warnings.</li>
+<li>What is speculative retry?</li>
+<li>Coordinator sends a duplicate request after a delay when a replica is slow, improving tail latency at the cost of extra load.</li>
+</ul>
+<h2 id="advanced-topics">Advanced Topics</h2>
+<ul>
+<li>How does compaction strategy affect reads/writes?</li>
+<li>STCS: good for write-heavy, but read amplification; LCS: better read latency, more write/amplification; TWCS: best for time-series with TTL.</li>
+<li>What is read repair and when does it happen?</li>
+<li>Background reconciliation during reads; either blocking (on digests mismatch at CL&gt;ONE) or speculative per configuration.</li>
+<li>How do you handle schema changes at scale?</li>
+<li>Apply via migrations, wait for schema agreement, roll out in steps (add new tables, dual write, cut over, retire old tables).</li>
+<li>How do you model many-to-many relationships?</li>
+<li>Use two denormalized tables to keep queries single-partition.
+    <div class="highlight"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">users_by_group</span><span class="w"> </span><span class="p">(</span>
+<span class="w">  </span><span class="n">group_id</span><span class="w"> </span><span class="n">UUID</span><span class="p">,</span>
+<span class="w">  </span><span class="n">user_id</span><span class="w"> </span><span class="n">UUID</span><span class="p">,</span>
+<span class="w">  </span><span class="n">full_name</span><span class="w"> </span><span class="nb">text</span><span class="p">,</span>
+<span class="w">  </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="p">(</span><span class="n">group_id</span><span class="p">,</span><span class="w"> </span><span class="n">user_id</span><span class="p">)</span>
+<span class="p">);</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">groups_by_user</span><span class="w"> </span><span class="p">(</span>
+<span class="w">  </span><span class="n">user_id</span><span class="w"> </span><span class="n">UUID</span><span class="p">,</span>
+<span class="w">  </span><span class="n">group_id</span><span class="w"> </span><span class="n">UUID</span><span class="p">,</span>
+<span class="w">  </span><span class="n">group_name</span><span class="w"> </span><span class="nb">text</span><span class="p">,</span>
+<span class="w">  </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span><span class="w"> </span><span class="n">group_id</span><span class="p">)</span>
+<span class="p">);</span>
+</code></pre></div></li>
+</ul></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script src="../js/bootstrap.bundle.min.js"></script>
+        <script>
+            var base_url = "..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../js/base.js"></script>
+        <script src="../search/main.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

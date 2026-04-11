@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../img/favicon.ico">
+        <title>Labs Guide - Cassandra Learning Labs</title>
+        <link href="../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../css/fontawesome.min.css" rel="stylesheet">
+        <link href="../css/brands.min.css" rel="stylesheet">
+        <link href="../css/solid.min.css" rel="stylesheet">
+        <link href="../css/v4-font-face.min.css" rel="stylesheet">
+        <link href="../css/base.css" rel="stylesheet">
+        <link id="hljs-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atelier-forest-light.min.css" >
+        <link id="hljs-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css" disabled>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="..">Cassandra Learning Labs</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="nav-item">
+                                <a href=".." class="nav-link">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="./" class="nav-link active" aria-current="page">Labs Guide</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../interview-questions/" class="nav-link">Interview Questions</a>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ms-md-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href=".." class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../interview-questions/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-bs-toggle="collapse" data-bs-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-bs-level="1"><a href="#cassandra-cql-labs-guided-learning-path" class="nav-link">Cassandra CQL Labs — Guided Learning Path</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="cassandra-cql-labs-guided-learning-path">Cassandra CQL Labs — Guided Learning Path</h1>
+<p>These labs are incremental and intentionally query-first. Follow them in order to build a mental model of Cassandra's data modeling choices, trade-offs, and operational concerns.</p>
+<p>Environment (assumptions)
+- Cassandra 5.x (local Docker-based labs).
+- Java 21 / Spring Boot app lives in <code>spring-boot-app/</code> (used separately from the labs).
+- Schema and initialization live under <code>scripts/</code> and <code>labs/</code>.
+- Conventions: schema uses query-first denormalized tables; each lab uses <code>IF NOT EXISTS</code> so it is safe to re-run.</p>
+<p>Quick start
+- Start the Docker Cassandra setup (from project root):</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># start the cluster as defined in scripts/docker-compose.yml</span>
+docker<span class="w"> </span>compose<span class="w"> </span>-f<span class="w"> </span>scripts/docker-compose.yml<span class="w"> </span>up<span class="w"> </span>-d
+</code></pre></div>
+<ul>
+<li>Run a lab file inside the running Cassandra container. </li>
+<li>Note: the container does not automatically see your host <code>labs/</code> files unless they are mounted. Two safe options:</li>
+</ul>
+<p>1) Use the provided init script (if present) that is already copied into the container:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># this runs the combined init that the container exposes (if scripts/init.cql exists)</span>
+docker<span class="w"> </span>compose<span class="w"> </span>-f<span class="w"> </span>scripts/docker-compose.yml<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>cassandra<span class="w"> </span>cqlsh<span class="w"> </span>-f<span class="w"> </span>/init/init.cql
+</code></pre></div>
+<p>2) Copy an individual lab file into the container and run it there (recommended when iterating on a single lab):</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># copy a file into the container, then run it with cqlsh</span>
+docker<span class="w"> </span>cp<span class="w"> </span>labs/01_keyspace_basics.cql<span class="w"> </span><span class="k">$(</span>docker<span class="w"> </span>compose<span class="w"> </span>-f<span class="w"> </span>scripts/docker-compose.yml<span class="w"> </span>ps<span class="w"> </span>-q<span class="w"> </span>cassandra<span class="k">)</span>:/tmp/01_keyspace_basics.cql
+docker<span class="w"> </span>compose<span class="w"> </span>-f<span class="w"> </span>scripts/docker-compose.yml<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>cassandra<span class="w"> </span>cqlsh<span class="w"> </span>-f<span class="w"> </span>/tmp/01_keyspace_basics.cql
+</code></pre></div>
+<p>Note: using <code>-f /labs/01_keyspace_basics.cql</code> directly fails when the container has no <code>/labs</code> mount ("No such file or directory").
+Use the copy approach or update your compose file to mount the project root into the container.</p>
+<p>Lab order (do not change — learning path is intentional)
+1. <code>01_keyspace_basics.cql</code> — keyspace creation, SimpleStrategy, first table
+2. <code>02_partitioning_clustering.cql</code> — partitioning and clustering keys; bounding partitions
+3. <code>03_modeling_by_query.cql</code> — query-driven modeling and lookup tables (dual-write)
+4. <code>04_indexes_and_mv.cql</code> — secondary indexes and materialized views (trade-offs)
+5. <code>05_consistency_lwt_batch.cql</code> — consistency levels, lightweight transactions, batches
+6. <code>06_ttl_tombstones.cql</code> — TTLs, tombstones, delete behavior, compaction notes
+7. <code>07_aggregation_filtering.cql</code> — aggregation, ALLOW FILTERING caution, counters/aggregation patterns</p>
+<p>Per-lab, table-by-table explanation and purpose</p>
+<p>Lab 01 — Keyspace basics (<code>01_keyspace_basics.cql</code>)
+- Keyspace: <code>cassandra_labs</code> created with <code>SimpleStrategy</code> replication_factor=1.
+  - Why: fastest for single-node local dev. Simpler startup and predictable behavior for learning.
+  - Alternatives: <code>NetworkTopologyStrategy</code> (NTS) for multi-DC setups (see "Replication strategies" below). Use RF &gt;= 3 per DC in production.
+- Table: <code>products_by_id</code>
+  - Columns: <code>product_id</code> (uuid PK), <code>name</code>, <code>category</code>, <code>price</code>, <code>created_at</code>.
+  - Primary key: simple primary key on <code>product_id</code> (good when access is by id). No clustering columns.
+  - Demonstrates: basic inserts, selects, and TTL usage via UPDATE ... USING TTL to show TTL semantics.</p>
+<p>Lab 02 — Partitioning and clustering (<code>02_partitioning_clustering.cql</code>)
+- Table: <code>events_by_day</code>
+  - PK: <code>((event_day), event_ts)</code> — partition key = <code>event_day</code>, clustering = <code>event_ts</code>.
+  - Purpose: show distribution by day and ordered reads (recent-first using DESC clustering order).
+  - Trade-offs: using only day as partition key can produce hot/unbounded partitions for high traffic; show time bucketing.
+- Table: <code>events_by_day_hour</code>
+  - PK: <code>((event_day, hour_bucket), event_ts)</code> — adds <code>hour_bucket</code> to cap partition size.
+  - Purpose: demonstrates explicit bucketing to prevent hot partitions and to bound reads.</p>
+<p>Lab 03 — Modeling by query (<code>03_modeling_by_query.cql</code>)
+- Concept: design tables for access patterns rather than normalized relational joins.
+- Table: <code>users_by_id</code>
+  - PK: <code>user_id</code> (read by id).
+- Table: <code>users_by_email</code>
+  - PK: <code>((email), user_id)</code> (lookup by email, supports multiple users per email if needed).
+  - Purpose: show denormalization; keep lookup tables synchronized via dual-writes or batches (example shows a logged batch).
+  - Anti-pattern: don't scan <code>users_by_id</code> by email — that requires ALLOW FILTERING and is inefficient.</p>
+<p>Lab 04 — Indexes and materialized views (<code>04_indexes_and_mv.cql</code>)
+- Secondary index on <code>users_by_id(email)</code>
+  - When to use: low-cardinality columns, queries that target small partitions; avoid for fan-out across many partitions.
+- Materialized view <code>users_by_email_mv</code>
+  - Why shown: server-side denormalization to support a query without dual-writes.
+  - Caveats: MVs can drift and add repair cost; modern practice prefers explicit dual-writes from application code.</p>
+<p>Lab 05 — Consistency, LWT, and batching (<code>05_consistency_lwt_batch.cql</code>)
+- Demonstrates <code>CONSISTENCY</code> setting (the file uses <code>CONSISTENCY ONE</code> for dev).
+- LWT examples (<code>IF NOT EXISTS</code>, <code>IF full_name = ...</code>) — explains Paxos cost and when to use.
+- Logged vs Unlogged batch: shows atomic multi-table writes (logged) and performance-minded unlogged batches.</p>
+<p>Lab 06 — TTL and tombstones (<code>06_ttl_tombstones.cql</code>)
+- Table: <code>sessions_by_user</code> with TTLed inserts and explicit deletes.
+- Teaches: TTL generates tombstones; high-churn patterns can cause read/compaction performance issues.
+- Advice: don't lower <code>gc_grace_seconds</code> in prod without understanding repair; for local tests you may shorten it to observe tombstone cleanup.</p>
+<p>Lab 07 — Aggregation and filtering (<code>07_aggregation_filtering.cql</code>)
+- Shows that <code>COUNT(*)</code> over the entire cluster is a full scan — only safe when used per-partition.
+- <code>ALLOW FILTERING</code> is included to demonstrate a dangerous pattern and reinforce proper modeling (use lookup tables or pre-aggregated counters).</p>
+<p>Replication strategies — SimpleStrategy vs NetworkTopologyStrategy
+- SimpleStrategy
+  - Intended for single-DC deployments and local development only.
+  - Example usage in labs: fast startup and minimal operational complexity.
+  - Not suitable for multi-DC because it places replicas by token range only.
+- NetworkTopologyStrategy (NTS)
+  - Specify per-DC replication factors: e.g. <code>{'class':'NetworkTopologyStrategy', 'dc1':3, 'dc2':3}</code>.
+  - Use when you have multiple data centers (cloud regions or physical DCs). Recommended RF per DC: 3 for typical production (lets you survive rack/node failures while maintaining quorum).
+  - Testing vs Prod: In testing (single-host Docker) set RF=1 or 2 to save resources; in realistic prod demos use RF=3 per DC and run multiple nodes per DC.</p>
+<p>Practical demo notes for multi-DC / racks
+- For a richer multi-DC demo: spin up nodes labeled for each DC (container hostnames or container labels) and set RF per DC in the keyspace. Racks can remain implicit for a lab. Example: create multiple containers, set <code>broadcast_address</code> and <code>seed_provider</code> appropriately, and create keyspace with NTS specifying the DC names you used.
+- For learning purposes the labs include a <code>cassandra_labs_nets</code> NTS example; ensure your compose and init scripts create matching DC names (the error "Unrecognized strategy option {dc2}" usually means the keyspace was created with a DC name that Cassandra does not know about — make sure your cluster defines that DC).</p>
+<p>Common troubleshooting (concise)
+- "Can't open 'labs/01_keyspace_basics.cql'": container has no <code>/labs</code> mount. Use <code>docker cp</code> into container or mount the repository root in docker-compose.
+- <code>AlreadyExists: Keyspace ... already exists</code>: safe; the CQL files use <code>IF NOT EXISTS</code>. You can skip or edit to DROP if you want to reset.
+- "Seed provider lists no seeds" on startup: your cassandra.yaml seed provider lists hostnames the node cannot resolve (e.g., <code>cassandra</code>). Ensure container names match the seed list or use IPs. In docker-compose use service name as hostname and ensure networks are correct. For two-rack demos, make sure at least one node lists a valid seed.
+- <code>socket.gaierror: [Errno -2] Name or service not known</code> when running init container: the init script attempted to contact a host that doesn't resolve. Use the container name from <code>docker compose ps</code> or the container IP.</p>
+<p>Docs and story (why these labs exist)</p>
+<ul>
+<li>Story: start with the simplest unit — keyspace and single-table reads by id </li>
+<li>then introduce partitioning/clustering (how data is distributed and ordered), </li>
+<li>then move to modeling by query (the core Cassandra mindset), </li>
+<li>followed by optional server-side helpers (indexes/MV) and operational features (consistency, LWT, batching, TTL/tombstones), </li>
+<li>and finally aggregation and filtering pitfalls. Each lab intentionally introduces a small, testable concept and shows both the correct patterns and common anti-patterns you'd encounter in interviews.</li>
+</ul>
+<p>Notes from the Copilot context (project conventions)
+- This repo is intentionally query-first and denormalized.
+- Keep the learning path (lab order) unchanged — the labs build on each other.
+- Use <code>scripts/init.cql</code> for a consolidated init; if you prefer per-lab runs, run the specific lab files by copying them into the container as shown above.</p>
+<p>If you'd like next steps I can:
+- Consolidate <code>scripts/init.cql</code> and the individual <code>labs/*.cql</code> into a single <code>scripts/init.cql</code> (or remove duplicates) and update <code>docker-compose.yml</code> to mount the repository so you can run <code>cqlsh -f /labs/01_keyspace_basics.cql</code> directly from the container. (I can implement this now if you want.)
+- Add a short appendix with command examples for copying files into the container, or update <code>scripts/docker-compose.yml</code> to mount the repo.</p>
+<p>Why query-first (concise)
+- What it means: instead of modeling data around normalized entities and joins, you model tables around the queries your application needs to run. Each table is designed so a target query touches a single partition and returns results with predictable latency.
+- Why this repo: Cassandra is optimized for high write throughput and fast single-partition reads. Denormalization (storing the same logical data in multiple tables) keeps reads simple and fast at the cost of extra storage and write coordination.</p>
+<p>Quick mapping to the labs
+- Lab 03 (<code>users_by_id</code> + <code>users_by_email</code>) demonstrates the canonical pattern: one table per access pattern. Reads by id and reads by email hit different tables designed for those access patterns.
+- Lab 02 shows partition bucketing to avoid hot partitions — a common operational technique when query-first tables may otherwise grow unbounded.</p>
+<p>Step-by-step example — converting a relational model to query-first
+- Relational (example): a single <code>users</code> table and an <code>orders</code> table, and an application that needs:
+  1) Get user by id
+  2) Get user by email
+  3) Get orders for a user (most recent first)</p>
+<p>Relational schema (conceptual):
+- users(id PK, email unique, full_name, created_at)
+- orders(id PK, user_id FK -&gt; users.id, created_at, amount, status)</p>
+<p>Problems on Cassandra if you keep this relational layout:
+- "Get user by email" requires a full-table scan or secondary index (not ideal at scale).
+- "Get orders for a user" is doable if <code>orders</code> is partitioned by user, but joining across tables is an anti-pattern.</p>
+<p>Query-first conversion (concrete CQL examples — also available in <code>docker/init.cql</code> and <code>labs/08_relational_to_query_first.cql</code>):</p>
+<p>1) users_by_id — look up by id
+CREATE TABLE IF NOT EXISTS users_by_id (
+  user_id uuid PRIMARY KEY,
+  email text,
+  full_name text,
+  created_at timestamp
+);</p>
+<p>2) users_by_email — lookup table to answer email-&gt;user_id efficiently
+CREATE TABLE IF NOT EXISTS users_by_email (
+  email text,
+  user_id uuid,
+  full_name text,
+  created_at timestamp,
+  PRIMARY KEY ((email), user_id)
+) WITH CLUSTERING ORDER BY (user_id ASC);</p>
+<p>3) orders_by_user — serve the "get orders for a user" access pattern (recent first)
+CREATE TABLE IF NOT EXISTS orders_by_user (
+  user_id uuid,
+  order_ts timestamp,
+  order_id uuid,
+  amount decimal,
+  status text,
+  PRIMARY KEY ((user_id), order_ts)
+) WITH CLUSTERING ORDER BY (order_ts DESC);</p>
+<p>Typical application write flow (dual-write / batch):
+- When creating an order, write to <code>orders_by_user</code> and also record any additional helper tables required by queries.
+- Example logged batch (atomic across tables):
+BEGIN LOGGED BATCH
+  INSERT INTO orders_by_user (user_id, order_ts, order_id, amount, status) VALUES (1111..., toTimestamp(now()), uuid(), 129.99, 'PLACED');
+  -- if you had another table for order lookup by id, write it here
+APPLY BATCH;</p>
+<p>Common queries and their CQL (fast, partition-scoped):
+- Get user by id: SELECT * FROM users_by_id WHERE user_id = <uuid>;
+- Get users by email: SELECT * FROM users_by_email WHERE email = '<email>';
+- List recent orders for a user: SELECT * FROM orders_by_user WHERE user_id = <uuid> LIMIT 20;</p>
+<p>Why this aligns with the Spring models in this repo
+- The <code>OrderByUser</code> model in <code>spring-boot-app</code> maps directly to <code>orders_by_user</code> above: the PK is the <code>user_id</code> partition with <code>order_ts</code> clustering for ordering. Writing/reading in the service layer should target these tables directly (dual-writes for any additional lookup tables).</p>
+<p>Orders table notes (practical)
+- Use time-based clustering columns (<code>order_ts</code> or timeuuid) so reads for recent orders are efficient and bounded.
+- If a user can generate a very large number of orders, consider adding a bucket (e.g., year_month) to the partition key to bound partition size.</p>
+<p>2-node docker-compose demo and NTS keyspaces (how-to)
+- The project includes a <code>docker/docker-compose.yml</code> demo for two local nodes. Important points to make NTS keyspaces work:
+  - Each Cassandra node must agree on seed hostnames; set <code>CASSANDRA_SEEDS</code> to a comma-separated list of seed hostnames that are resolvable inside the Docker network (e.g., <code>cassandra,cassandra2</code>).
+  - When creating a <code>NetworkTopologyStrategy</code> keyspace, the DC names you use in the keyspace replication map must match the node-configured DC names (environment variable <code>CASSANDRA_DC</code>). The compose file sets <code>CASSANDRA_DC</code> for each node.
+  - For a 2-node lab/demo set RF=2 for the DC you create in <code>init.cql</code> (so replication fits the available nodes). For a production demo use RF=3 and run more nodes.</p>
+<p>Example: to create a 2-node NTS-friendly keyspace for local demos:
+CREATE KEYSPACE IF NOT EXISTS cassandra_labs_nets WITH replication = {'class':'NetworkTopologyStrategy', 'datacenter1': 2};</p>
+<p>Troubleshooting seeds and hostnames
+- If a node fails with "Seed provider couldn't lookup host cassandra" or "The seed provider lists no seeds":
+  - Check service hostnames in <code>docker compose ps</code> and ensure they match <code>CASSANDRA_SEEDS</code> entries.
+  - Ensure any entry that lists a DC name in the keyspace uses exactly the same DC value present in node environment variables.</p>
+<p>Files you may want to inspect or run
+- <code>docker/docker-compose.yml</code> — updated compose for a 2-node demo.
+- <code>docker/init.cql</code> — consolidated init script (contains <code>orders_by_user</code> table and demo data). You can run it with the init container or copy individual lab files into the running container.
+- <code>labs/08_relational_to_query_first.cql</code> — new file with step-by-step conversion and sample queries (safe to re-run).</p></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script src="../js/bootstrap.bundle.min.js"></script>
+        <script>
+            var base_url = "..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../js/base.js"></script>
+        <script src="../search/main.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>
