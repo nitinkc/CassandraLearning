@@ -52,3 +52,9 @@ jobs:
           publish_branch: gh-pages
           allow_empty_commit: true
 
+      - name: Output deployed site link
+        run: |
+          echo "✅ Deployment completed successfully!"
+          echo "📖 Your site is available at: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
+          echo "🔗 Full URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
+
