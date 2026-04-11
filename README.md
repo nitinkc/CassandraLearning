@@ -1,7 +1,8 @@
 # Cassandra Learning Labs (CQL + Spring Boot)
-[https://nitinkc.github.io/CassandraSpringBootLearning/](https://nitinkc.github.io/CassandraSpringBootLearning/)
+[Cassandra with Docker Learning Repo](   https://nitinkc.github.io/CassandraSpringBootLearning/)
 
-[https://nitinkc.github.io/CassandraSpringBootLearning/](https://nitinkc.github.io/CassandraSpringBootLearning/)
+[Detailed Documentation and Tutorial](https://nitinkc.github.io/CassandraLearning/)
+
 ## Prerequisites
 - Java 21
 - Maven
