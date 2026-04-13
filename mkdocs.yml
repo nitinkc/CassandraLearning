@@ -21,6 +21,9 @@ markdown_extensions:
   - pymdownx.inlinehilite
   - pymdownx.superfences
   - pymdownx.details
+  - pymdownx.highlight:
+      use_pygments: true
+      linenums: false
 plugins:
   - search
 
